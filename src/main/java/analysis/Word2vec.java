@@ -1,0 +1,90 @@
+package analysis;
+
+import org.datavec.api.util.ClassPathResource;
+import org.deeplearning4j.models.embeddings.WeightLookupTable;
+import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable;
+import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
+import org.deeplearning4j.models.word2vec.VocabWord;
+import org.deeplearning4j.models.word2vec.Word2Vec;
+import org.deeplearning4j.models.word2vec.wordstore.inmemory.InMemoryLookupCache;
+import org.deeplearning4j.text.sentenceiterator.BasicLineIterator;
+import org.deeplearning4j.text.sentenceiterator.SentenceIterator;
+import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor;
+import org.deeplearning4j.text.tokenization.tokenizerfactory.DefaultTokenizerFactory;
+import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.FileNotFoundException;
+
+/**
+ * This is simple example for model weights update after initial vocab building.
+ * If you have built your w2v model, and some time later you've decided that it can be
+ * additionally trained over new corpus, here's an example how to do it.
+ *
+ * PLEASE NOTE: At this moment, no new words will be added to vocabulary/model.
+ * Only weights update process will be issued. It's often called "frozen vocab training".
+ *
+ * @author raver119@gmail.com
+ */
+public class Word2vec {
+
+    private static Logger log = LoggerFactory.getLogger(Word2vec.class);
+    private Word2Vec word2vec;
+    private String ModelName;
+
+    public void train(String trainingFile) throws FileNotFoundException {
+        String filePath = new ClassPathResource(trainingFile).getFile().getAbsolutePath();
+        log.info("Load & Vectorize Sentences....");
+        SentenceIterator iter = new BasicLineIterator(filePath);
+        TokenizerFactory t = new DefaultTokenizerFactory();
+        t.setTokenPreProcessor(new CommonPreprocessor());
+        InMemoryLookupCache cache = new InMemoryLookupCache();
+        WeightLookupTable<VocabWord> table = new InMemoryLookupTable.Builder<VocabWord>()
+                .vectorLength(100)
+                .useAdaGrad(false)
+                .cache(cache)
+                .lr(0.025f).build();
+        log.info("Building model....");
+        word2vec = new Word2Vec.Builder()
+                .minWordFrequency(5)
+                .iterations(1)
+                .epochs(1)
+                .layerSize(100)
+                .seed(42)
+                .windowSize(5)
+                .iterate(iter)
+                .tokenizerFactory(t)
+                .lookupTable(table)
+                .vocabCache(cache)
+                .build();
+        log.info("Fitting Word2Vec model....");
+        word2vec.fit();
+        WordVectorSerializer.writeFullModel(word2vec,ModelName);
+    }
+
+    public Word2vec(String ModelName, String trainingFile) {
+        this.ModelName = ModelName;
+        try {
+            word2vec = WordVectorSerializer.loadFullModel(ModelName);
+        } catch (FileNotFoundException e) {
+            log.info("Needing to train");
+            try {
+                this.train(trainingFile);
+            } catch (FileNotFoundException f) {
+                log.error(f.toString());
+            }
+        }
+    }
+
+    public void test() {
+        double cosSim = word2vec.similarity("day", "night");
+        System.out.println(cosSim);
+    }
+
+    public static void main(String[] args) throws Exception {
+        Word2vec tt = new Word2vec("pathToSaveModel.txt","raw_sentences.txt");
+        tt.test();
+    }
+}
+
