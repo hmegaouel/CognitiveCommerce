@@ -63,7 +63,7 @@ public class entry {
 			}
 		});
 		twitter.start();
-		facebook.start();
+		//facebook.start();
 
 	}
 

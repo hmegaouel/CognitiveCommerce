@@ -80,7 +80,8 @@ public class image {
 		//System.out.println(urlString);
 		URL url = new URL(urlString);
 		BufferedImage image = ImageIO.read(url);
-		try (OutputStream os = new FileOutputStream(outputFile)) {
+		try {
+			OutputStream os = new FileOutputStream(outputFile);
 	        ImageOutputStream ios = ImageIO.createImageOutputStream(os);
 	        ImageIO.write(image, "jpg", ios);
 	    } catch (Exception exp) {

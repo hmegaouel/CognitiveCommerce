@@ -30,6 +30,7 @@ public class tweet {
 	}
 	
 	public void getTweets(String twitURL) throws IOException, JSONException, ParseException {
+		System.out.println("start");
 		if (w<1) {
 			if (twitURL == null) {
 				String okSearch = "from:"+twitterUser+"&size=100";

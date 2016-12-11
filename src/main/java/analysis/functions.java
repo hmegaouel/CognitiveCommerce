@@ -11,13 +11,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import twitter.Element;
 import twitter.Events;
 import twitter.download;
 
+import analysis.Word2vec;
+
 public class functions {
 
     private static NormalizedLevenshtein l = new NormalizedLevenshtein();
+    private static Logger log = LoggerFactory.getLogger(functions.class);
 
     public static JSONArray getKeywords(String body) throws IOException, JSONException {
         String stuff = "outputMode=json&text="+URLEncoder.encode(body, "UTF-8");
@@ -90,14 +95,21 @@ public class functions {
 
     public static double getEventScore(Events event,HashMap<String, Element> positive, HashMap<String, Element> negative, Date currentDate) {
         double result = 0;
+        double score;
         for (int i=0;i<event.keywords.size();i++) {
             for (String key : positive.keySet()) {
-                long diff = (currentDate.getTime()-positive.get(key).date.getTime())/(1000*60*60*24);
-                result += (positive.get(key).sentiment)*(1-l.distance(key, event.keywords.get(i)))/diff;
+                log.info(key+" vs "+event.keywords.get(i));
+                score = Word2vec.getScore(key,event.keywords.get(i));
+                log.info("pos score is "+score);
+                long diff = (1+currentDate.getTime()-positive.get(key).date.getTime())/(1000*60*60*24);
+                result += (positive.get(key).sentiment)*(score)/diff;
             }
             for (String key : negative.keySet()) {
-                long diff = currentDate.getTime()-negative.get(key).date.getTime()/(1000*60*60*24);
-                result += (negative.get(key).sentiment)*(1-l.distance(key, event.keywords.get(i)))/diff;
+                log.info(key+" vs "+event.keywords.get(i));
+                score = Word2vec.getScore(key,event.keywords.get(i));
+                log.info("neg score is "+score);
+                long diff = (1+currentDate.getTime()-positive.get(key).date.getTime())/(1000*60*60*24);
+                result += (negative.get(key).sentiment)*(score)/diff;
             }
         }
         return result;
@@ -107,6 +119,7 @@ public class functions {
         String best = events.get(0).name; double top = getEventScore(events.get(0),positive,negative,currentDate);
         print(events.get(0).name+" : "+top);
         for (int i=1; i<events.size();i++) {
+            print("calculating score for "+events.get(i).name);
             double score = getEventScore(events.get(i),positive,negative,currentDate);
             print(events.get(i).name+" : "+score);
             if (score>top) {

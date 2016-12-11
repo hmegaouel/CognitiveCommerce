@@ -12,7 +12,7 @@ import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 public class download {
 	
-	private static String alchemyAPIKey = "5a70a0422d62c211e26e54a87bf3d34f8a2dee5f";
+	private static String alchemyAPIKey = "33295d5ddf57834ef58d33bef5161d46db0e4e49";
 	private static String twitterUser = "79d21e02-98fb-4486-89dc-05e8b7256789";
 	private static String twitterPass = "bBdtlQg6vx";
 	

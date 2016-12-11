@@ -30,7 +30,7 @@ import java.io.FileNotFoundException;
 public class Word2vec {
 
     private static Logger log = LoggerFactory.getLogger(Word2vec.class);
-    private Word2Vec word2vec;
+    private static Word2Vec word2vec;
     private String ModelName;
 
     public void train(String trainingFile) throws FileNotFoundException {
@@ -77,14 +77,22 @@ public class Word2vec {
         }
     }
 
-    public void test() {
-        double cosSim = word2vec.similarity("day", "night");
-        System.out.println(cosSim);
+    public static double getScore(String word1, String word2) {
+        double score = 0;
+        try {
+            score = word2vec.similarity(word1, word2);
+        } catch (NullPointerException e) {
+            log.info("Word hasnt been trained with");
+        }
+        return score;
     }
 
+    /*
     public static void main(String[] args) throws Exception {
         Word2vec tt = new Word2vec("pathToSaveModel.txt","raw_sentences.txt");
-        tt.test();
+        System.out.println(tt.getScore("day","game"));
     }
+    */
+
 }
 
