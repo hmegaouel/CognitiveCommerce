@@ -88,6 +88,19 @@
           <version>2.10.1</version>
       </dependency>
 
+      <!-- https://mvnrepository.com/artifact/com.ibm.watson.developer_cloud/personality-insights -->
+      <dependency>
+          <groupId>com.ibm.watson.developer_cloud</groupId>
+          <artifactId>personality-insights</artifactId>
+          <version>3.5.3</version>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/com.ibm.watson.developer_cloud/java-wrapper -->
+      <dependency>
+          <groupId>com.ibm.watson.developer_cloud</groupId>
+          <artifactId>java-wrapper</artifactId>
+          <version>1.1.1</version>
+      </dependency>
+
 
       <!--<dependency>-->
           <!--<groupId>org.deeplearning4j</groupId>-->
