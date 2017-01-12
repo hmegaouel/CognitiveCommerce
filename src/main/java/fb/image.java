@@ -7,6 +7,7 @@ import com.ibm.watson.developer_cloud.visual_recognition.v3.model.VisualClassifi
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import twitter.Element;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
@@ -17,20 +18,24 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 
 public class image {
 	
 	private VisualRecognition service;
-	private HashMap<String,Integer> imageDb;
+	public HashMap<String,Element> imageDb;
+	private download download;
+	double max = 1;
 	
-	public image() {
+	public image(String token) {
 		service = new VisualRecognition(VisualRecognition.VERSION_DATE_2016_05_20);
 	    service.setApiKey("e9391b759dfb709442f973a49c65253f17b26b3c");
-	    imageDb = new HashMap<String,Integer>();
+	    imageDb = new HashMap<String,Element>();
+		download = new download(token);
 	}
 	
-	public void processImages(String url) throws IOException, JSONException{
+	public void processImages(String url) throws IOException, JSONException, ParseException {
 		
 		String images = null;
 		if (url == null) {
@@ -42,17 +47,29 @@ public class image {
 		JSONObject fbObj = new JSONObject(images);
 		if (url == null) fbObj = fbObj.getJSONObject("photos");
 		JSONArray postsObject = fbObj.getJSONArray("data");
+		System.out.println(postsObject);
 		for (int i=0;i<postsObject.length();i++){
 			String id = postsObject.getJSONObject(i).getString("id");
+			String datem = postsObject.getJSONObject(i).getString("created_time");
+			Date dd = main.date.fbinputFormat.parse(datem);
 			JSONArray keywords = run(id);
 			//System.out.println(i*100/postsObject.length()+"%");
 			for (int j=0;j<keywords.length();j++) {
 				if (keywords.getJSONObject(j).has("type_hierarchy")) {
 					String tp = keywords.getJSONObject(j).getString("type_hierarchy");
-					if (imageDb.containsKey(tp)) {
-						imageDb.put(tp, imageDb.get(tp)+1);
+					String[] parts = tp.split("/");
+					String finalCategory = parts[parts.length-1];
+					if (imageDb.containsKey(finalCategory)) {
+						double actuel = imageDb.get(finalCategory).sentiment+1;
+						if (actuel>max) {
+							max = actuel;
+						}
+						Element old = imageDb.get(finalCategory);
+						old.setSentiment(old.sentiment+1.0);
+						imageDb.put(finalCategory, old);
 					} else {
-						imageDb.put(tp, 1);
+						Element entry = new Element(1.0,dd);
+						imageDb.put(finalCategory, entry);
 					}
 				}
 			}
@@ -67,7 +84,9 @@ public class image {
 	
 	public void processResults(){
 		for (String key : imageDb.keySet()) {
-			functions.print(key+" : "+imageDb.get(key));
+			Element old = imageDb.get(key);
+			old.setSentiment(imageDb.get(key).sentiment/max);
+			imageDb.put(key,old);
 		}
 	}
 	
@@ -105,7 +124,7 @@ public class image {
 	}
 	
 	public static void main(String[] args) throws IOException, JSONException, ParseException {
-		image im = new image();
+		image im = new image("EAACEdEose0cBAO0g5OWC8FdBTwQ904fpbZBqeEXNpFrjfPyTVKhp8qRWxd7dIuvIVlmRJeaVzFjJKV1q9Pezqb6Eu5CXCSbci8D046ZA1Ta6tqVKKuCTRWbwSS85RvdLUU4R6gxZAkc8nQuILIUyOj0A0KEvB8jtD7SxaoWlgZDZD");
 		im.processImages(null);
 	}
 

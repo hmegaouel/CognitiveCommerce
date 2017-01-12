@@ -17,10 +17,10 @@ public class tweet {
 	private String twitterUser;
 	private ArrayList<String> hastags = new ArrayList<String>();
 	private ArrayList<String> arrotags = new ArrayList<String>();
-	private HashMap<String,Element> result = new HashMap<String,Element>();
+	public HashMap<String,Element> result = new HashMap<String,Element>();
 	private int w = 0;
-	private HashMap<String,Element> positive = new HashMap<String,Element>();
-	private HashMap<String,Element> negative = new HashMap<String,Element>();
+	public HashMap<String,Element> positive = new HashMap<String,Element>();
+	public HashMap<String,Element> negative = new HashMap<String,Element>();
 	private final Date currentDate;
 	
 	
@@ -113,7 +113,7 @@ public class tweet {
 	}
 	
 	public String getEvent(List<Events> events){
-		return functions.getBestEvent(events, positive, negative, currentDate);
+		return functions.getBestEvent(events, result, currentDate);
 	}
 
 }

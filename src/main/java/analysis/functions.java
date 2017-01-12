@@ -90,39 +90,28 @@ public class functions {
         return null;
     }
 
-    public static double getEventScore(Events event, HashMap<String, Element> positive, HashMap<String, Element> negative, Date currentDate) {
+    public static double getEventScore(Events event, HashMap<String, Element> allElements, Date currentDate) {
         double result = 0;
         double score;
         System.out.println("Getting score");
-        System.out.println(positive.size());
-        System.out.println(negative.size());
+        System.out.println(allElements.size());
         for (int i=0;i<event.keywords.size();i++) {
-            for (String key : positive.keySet()) {
-                System.out.println(key+" vs "+event.keywords.get(i));
+            for (String key : allElements.keySet()) {
                 score = Word2vec.getScore(key,event.keywords.get(i));
-                System.out.println("pos score is "+score);
-                long diff = (1+currentDate.getTime()-positive.get(key).date.getTime())/(1000*60*60*24);
-                result += (positive.get(key).sentiment)*(score)/diff;
+                long diff = (1+currentDate.getTime()-allElements.get(key).date.getTime())/(1000*60*60*24);
+                result += (allElements.get(key).sentiment)*(score)/diff;
                 //result += (positive.get(key).sentiment)*(1-l.distance(key, event.keywords.get(i)))/diff;
-            }
-            for (String key : negative.keySet()) {
-                System.out.println(key+" vs "+event.keywords.get(i));
-                score = Word2vec.getScore(key,event.keywords.get(i));
-                System.out.println("neg score is "+score);
-                long diff = (1+currentDate.getTime()-positive.get(key).date.getTime())/(1000*60*60*24);
-                result += (negative.get(key).sentiment)*(score)/diff;
-                //result += (negative.get(key).sentiment)*(1-l.distance(key, event.keywords.get(i)))/diff;
             }
         }
         return result;
     }
 
-    public static String getBestEvent(List<Events> events, HashMap<String, Element> positive, HashMap<String, Element> negative, Date currentDate) {
-        String best = events.get(0).name; double top = getEventScore(events.get(0),positive,negative,currentDate);
+    public static String getBestEvent(List<Events> events, HashMap<String, Element> allElements, Date currentDate) {
+        String best = events.get(0).name; double top = getEventScore(events.get(0),allElements,currentDate);
         print(events.get(0).name+" : "+top);
         for (int i=1; i<events.size();i++) {
             print("calculating score for "+events.get(i).name);
-            double score = getEventScore(events.get(i),positive,negative,currentDate);
+            double score = getEventScore(events.get(i),allElements,currentDate);
             print(events.get(i).name+" : "+score);
             if (score>top) {
                 top = score; best = events.get(i).name;

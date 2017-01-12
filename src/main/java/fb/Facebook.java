@@ -16,13 +16,13 @@ import java.util.List;
 public class Facebook {
 	
 	private int i = 0;
-	private HashMap<String, Element> positive;
-	private HashMap<String, Element> negative;
+	public HashMap<String, Element> positive;
+	public HashMap<String, Element> negative;
 	private final Date currentDate;
 	private final String token;
 	private download dwld;
 	
-	private HashMap<String,Element> result = new HashMap<String,Element>();
+	public HashMap<String,Element> result = new HashMap<String,Element>();
 	
 	public Facebook(Date dt, String token) {
 		this.currentDate = dt;
@@ -97,7 +97,7 @@ public class Facebook {
 	}
 	
 	public String getEvent(List<Events> events){
-		return functions.getBestEvent(events, positive, negative, currentDate);
+		return functions.getBestEvent(events, result, currentDate);
 	}
 
 }
