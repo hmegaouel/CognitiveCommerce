@@ -112,7 +112,7 @@ public class tweet {
 		}
 	}
 	
-	public String getEvent(List<Events> events){
+	public JSONObject getEvent(List<Events> events){
 		return functions.getBestEvent(events, result, currentDate);
 	}
 

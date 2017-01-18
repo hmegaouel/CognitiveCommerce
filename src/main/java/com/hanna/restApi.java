@@ -1,7 +1,9 @@
 package com.hanna;
+import analysis.functions;
 import fb.Facebook;
 import fb.image;
 import main.date;
+import org.json.JSONObject;
 import twitter.Element;
 import twitter.Events;
 import twitter.tweet;
@@ -15,7 +17,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
-@Path("/api")
+@Path("api")
 public class restApi {
     final List<Events> events = new ArrayList<Events>();
 
@@ -35,7 +37,7 @@ public class restApi {
 
     @POST @Consumes("application/json")
     @Path("/event")
-    public void event(final MyJaxBean input) throws ParseException, IOException {
+    public Response event(final MyJaxBean input) throws ParseException, IOException {
         String twitterUsername = input.twitterUsername;
         String fbToken = input.fbToken;
         events.add(new Events("PGW",new ArrayList<String>(Arrays.asList("game","video game","GTA","Call of duty","enemies"))));
@@ -52,7 +54,10 @@ public class restApi {
         image im = new image(fbToken);
         im.processImages(null);
         allResult.putAll(im.imageDb);
+        String best = functions.getBestEvent(events, allResult, date).toString();
+        return Response.status(200).entity(best).build();
     }
+
 
     @GET
     @Path("/twitter/{param}")
@@ -63,9 +68,12 @@ public class restApi {
         final Date date = new date().getDate();
         tweet twit = new tweet(twitterUsername,date);
         twit.getTweets(null);
-        String res = twit.getEvent(events);
-        return Response.status(200).entity(res).build();
+        HashMap<String, Element> allResult = new HashMap<String, Element>();
+        allResult.putAll(twit.result);
+        String best = functions.getBestEvent(events, allResult, date).toString();
+        return Response.status(200).entity(best).build();
     }
+
 
     @GET
     @Path("/fb/{param}")
@@ -77,7 +85,9 @@ public class restApi {
         Facebook fb = new Facebook(date, fbToken);
         fb.processPosts(null);
         fb.processResults();
-        String res = fb.getEvent(events);
-        return Response.status(200).entity(res).build();
+        HashMap<String, Element> allResult = new HashMap<String, Element>();
+        allResult.putAll(fb.result);
+        String best = functions.getBestEvent(events, allResult, date).toString();
+        return Response.status(200).entity(best).build();
     }
 }

@@ -97,27 +97,30 @@ public class functions {
         System.out.println(allElements.size());
         for (int i=0;i<event.keywords.size();i++) {
             for (String key : allElements.keySet()) {
-                score = Word2vec.getScore(key,event.keywords.get(i));
+                //score = Word2vec.getScore(key,event.keywords.get(i));
                 long diff = (1+currentDate.getTime()-allElements.get(key).date.getTime())/(1000*60*60*24);
-                result += (allElements.get(key).sentiment)*(score)/diff;
-                //result += (positive.get(key).sentiment)*(1-l.distance(key, event.keywords.get(i)))/diff;
+                //result += (allElements.get(key).sentiment)*(score)/diff;
+                result += (allElements.get(key).sentiment)*(1-l.distance(key, event.keywords.get(i)))/diff;
             }
         }
         return result;
     }
 
-    public static String getBestEvent(List<Events> events, HashMap<String, Element> allElements, Date currentDate) {
+    public static JSONObject getBestEvent(List<Events> events, HashMap<String, Element> allElements, Date currentDate) {
+        JSONObject jo = new JSONObject();
         String best = events.get(0).name; double top = getEventScore(events.get(0),allElements,currentDate);
-        print(events.get(0).name+" : "+top);
+        //print(events.get(0).name+" : "+top);
+        jo.put(events.get(0).name, top);
         for (int i=1; i<events.size();i++) {
             print("calculating score for "+events.get(i).name);
             double score = getEventScore(events.get(i),allElements,currentDate);
+            jo.put(events.get(i).name, score);
             print(events.get(i).name+" : "+score);
             if (score>top) {
                 top = score; best = events.get(i).name;
             }
         }
-        return best;
+        return jo;
     }
 
     public static void print(String str) {

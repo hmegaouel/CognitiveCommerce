@@ -5,6 +5,7 @@ import com.cloudant.client.api.CloudantClient;
 import com.cloudant.client.api.Database;
 import com.google.gson.JsonObject;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -64,11 +65,23 @@ public class bdd {
 
     }
 
-    public static void main(String [] args) {
+    public void getAll() throws IOException {
+
+        List<JsonObject> allFoos = db.getAllDocsRequestBuilder().includeDocs(true).build()
+                .getResponse().getDocsAs(JsonObject.class);
+
+        for(JsonObject o : allFoos){
+            System.out.println(o);
+        }
+
+    }
+
+    public static void main(String [] args) throws IOException {
 
         bdd bdd = new bdd();
         bdd.checkConnection();
-        bdd.search(new double[] {}, "Paris");
+        //bdd.search(new double[] {}, "Paris");
+        bdd.getAll();
 
     }
 

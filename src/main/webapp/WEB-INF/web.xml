@@ -4,33 +4,5 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-  <listener>
-    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-  </listener>
-
-  <!--
-    - Declare Spring request listener which sets up the required RequestAttributes
-    - to support Springs and Cocoon custom bean scopes like the request scope or the
-    - session scope.
-    -->
-  <listener>
-    <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
-  </listener>
-
-  <!-- Servlet Configuration ========================================== -->
-
-  <servlet>
-    <servlet-name>jersey-servlet</servlet-name>
-    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
-    <init-param>
-      <param-name>jersey.config.server.provider.packages</param-name>
-      <param-value>com.hanna</param-value>
-    </init-param>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>jersey-servlet</servlet-name>
-    <url-pattern>/*</url-pattern>
-  </servlet-mapping>
-
 </web-app>
         
