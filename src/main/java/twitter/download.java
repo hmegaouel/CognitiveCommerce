@@ -8,7 +8,7 @@ import java.net.URL;
 
 public class download {
 	
-	private static String alchemyAPIKey = "33295d5ddf57834ef58d33bef5161d46db0e4e49";
+	private static String alchemyAPIKey = "4a2e14d80c21f4334269db52847c5ca57bab7448";
 	private static String twitterUser = "79d21e02-98fb-4486-89dc-05e8b7256789";
 	private static String twitterPass = "bBdtlQg6vx";
 	

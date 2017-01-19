@@ -3,10 +3,14 @@ package main;
 import com.cloudant.client.api.ClientBuilder;
 import com.cloudant.client.api.CloudantClient;
 import com.cloudant.client.api.Database;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.json.JSONObject;
+import twitter.Events;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by hannamegaouel on 12/01/2017.
@@ -17,16 +21,17 @@ public class bdd {
     private String pass = "02ca06c41949d761c1f08364bd15d15b7774cf7c";
     private String account = "3f53d18a-bd59-463c-9eca-5c37a5d02e5a-bluemix";
     private CloudantClient client;
-    private Database db;
+    private static Database db;
 
     public bdd() {
 
+        System.out.println("Connecting to bdd");
         client = ClientBuilder.account(account)
                 .username(key)
                 .password(pass)
                 .build();
         db = client.database("events", false);
-
+        this.checkConnection();
     }
 
     public void checkConnection() {
@@ -54,15 +59,25 @@ public class bdd {
         return Math.sqrt(distance);
     }
 
-    public void search(double[] localCoords, String searchString) {
+    public static List<Events> searchByCity(String searchString) {
 
         String selector = "{ \"selector\": {\"city\": "+searchString+"},\"fields\": [\"title\",\"city\",\"date_start\"] }";
         List<JsonObject> res = db.findByIndex(selector, JsonObject.class);
-
+        List<Events> events = new ArrayList<Events>();
+        //int notnull = 0; int anull = 0;
         for(JsonObject o : res){
-            System.out.println(o);
-        }
+            //System.out.println(o);
+            JsonElement tags = o.get("tags");
 
+            if (tags == null) {
+                //anull++;
+            } else {
+                //notnull++;
+                String[] tagsString = tags.toString().replace("\"","").split(",");
+                events.add(new Events(o,new ArrayList<String>(Arrays.asList(tagsString))));
+            }
+        }
+        return events;
     }
 
     public void getAll() throws IOException {
@@ -73,15 +88,6 @@ public class bdd {
         for(JsonObject o : allFoos){
             System.out.println(o);
         }
-
-    }
-
-    public static void main(String [] args) throws IOException {
-
-        bdd bdd = new bdd();
-        bdd.checkConnection();
-        //bdd.search(new double[] {}, "Paris");
-        bdd.getAll();
 
     }
 

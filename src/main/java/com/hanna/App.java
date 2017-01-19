@@ -30,7 +30,7 @@ public class App {
             }));
             server.start();
 
-            System.out.println(String.format("Le serveur tourne, fermer le processus pour l'arreter.",
+            System.out.println(String.format("Le serveur tourne sur "+BASE_URI+ROOT_PATH+", fermer le processus pour l'arreter.",
                     BASE_URI, ROOT_PATH));
             Thread.currentThread().join();
         } catch (InterruptedException ex) {

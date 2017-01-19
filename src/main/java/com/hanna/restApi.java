@@ -2,6 +2,7 @@ package com.hanna;
 import analysis.functions;
 import fb.Facebook;
 import fb.image;
+import main.bdd;
 import main.date;
 import org.json.JSONObject;
 import twitter.Element;
@@ -19,7 +20,13 @@ import java.util.*;
 
 @Path("api")
 public class restApi {
-    final List<Events> events = new ArrayList<Events>();
+
+    final bdd bdd = new bdd();
+
+    class ev {
+        private String name;
+        private double score;
+    }
 
     @XmlRootElement
     public class MyJaxBean {
@@ -40,8 +47,7 @@ public class restApi {
     public Response event(final MyJaxBean input) throws ParseException, IOException {
         String twitterUsername = input.twitterUsername;
         String fbToken = input.fbToken;
-        events.add(new Events("PGW",new ArrayList<String>(Arrays.asList("game","video game","GTA","Call of duty","enemies"))));
-        events.add(new Events("Hackaton", new ArrayList<String>(Arrays.asList("programming","java","prize","computer","hack"))));
+        List<Events> events = bdd.searchByCity("Paris");
         final Date date = new date().getDate();
         tweet twit = new tweet(twitterUsername,date);
         twit.getTweets(null);
@@ -63,8 +69,7 @@ public class restApi {
     @Path("/twitter/{param}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTwitter(@PathParam("param") String twitterUsername) throws ParseException, IOException {
-        events.add(new Events("PGW",new ArrayList<String>(Arrays.asList("game","video game","GTA","Call of duty","enemies"))));
-        events.add(new Events("Hackaton", new ArrayList<String>(Arrays.asList("programming","java","prize","computer","hack"))));
+        List<Events> events = bdd.searchByCity("Paris");
         final Date date = new date().getDate();
         tweet twit = new tweet(twitterUsername,date);
         twit.getTweets(null);
@@ -79,8 +84,7 @@ public class restApi {
     @Path("/fb/{param}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFb(@PathParam("param") String fbToken) throws ParseException, IOException {
-        events.add(new Events("PGW",new ArrayList<String>(Arrays.asList("game","video game","GTA","Call of duty","enemies"))));
-        events.add(new Events("Hackaton", new ArrayList<String>(Arrays.asList("programming","java","prize","computer","hack"))));
+        List<Events> events = bdd.searchByCity("Paris");
         final Date date = new date().getDate();
         Facebook fb = new Facebook(date, fbToken);
         fb.processPosts(null);
