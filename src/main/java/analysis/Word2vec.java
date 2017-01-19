@@ -17,16 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 
-/**
- * This is simple example for model weights update after initial vocab building.
- * If you have built your w2v model, and some time later you've decided that it can be
- * additionally trained over new corpus, here's an example how to do it.
- *
- * PLEASE NOTE: At this moment, no new words will be added to vocabulary/model.
- * Only weights update process will be issued. It's often called "frozen vocab training".
- *
- * @author raver119@gmail.com
- */
+
 public class Word2vec {
 
     private static Logger log = LoggerFactory.getLogger(Word2vec.class);
@@ -87,12 +78,12 @@ public class Word2vec {
         return score;
     }
 
-    /*
+
     public static void main(String[] args) throws Exception {
         Word2vec tt = new Word2vec("pathToSaveModel.txt","raw_sentences.txt");
         System.out.println(tt.getScore("day","game"));
     }
-    */
+
 
 }
 
