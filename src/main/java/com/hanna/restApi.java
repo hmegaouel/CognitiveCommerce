@@ -14,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
@@ -29,6 +30,7 @@ public class restApi {
     }
 
     @XmlRootElement
+    @XmlType(name="")
     public class MyJaxBean {
         @XmlElement
         public String twitterUsername;
@@ -42,11 +44,10 @@ public class restApi {
         return Response.status(200).entity("All ok").build();
     }
 
-    @POST @Consumes("application/json")
-    @Path("/event")
-    public Response event(final MyJaxBean input) throws ParseException, IOException {
-        String twitterUsername = input.twitterUsername;
-        String fbToken = input.fbToken;
+    @GET
+    @Path("/event/{twitter}/{fb}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response event(@PathParam("twitter") String twitterUsername, @PathParam("fb") String fbToken) throws ParseException, IOException {
         List<Events> events = bdd.searchByCity("Paris");
         final Date date = new date().getDate();
         tweet twit = new tweet(twitterUsername,date);

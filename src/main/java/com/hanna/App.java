@@ -2,12 +2,16 @@ package com.hanna;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.grizzly.http.server.HttpServer;
+
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 /**
  * Hello world!
@@ -22,6 +26,7 @@ public class App {
             System.out.println("Lancement de l'api CognitiveCommerce");
 
             final ResourceConfig resourceConfig = new ResourceConfig(restApi.class);
+            resourceConfig.register(LoggingFeature.class);
             final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(BASE_URI, resourceConfig, false);
             Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
                 public void run() {

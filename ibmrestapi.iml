@@ -93,6 +93,7 @@
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:1.2.7" level="project" />
     <orderEntry type="library" name="Maven: org.nd4j:nd4j-api:0.7.1" level="project" />
     <orderEntry type="library" name="Maven: org.nd4j:nd4j-context:0.7.1" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish.jersey.media:jersey-media-json-jackson:unknown" level="project" />
     <orderEntry type="library" name="Maven: info.debatty:java-string-similarity:0.19" level="project" />
     <orderEntry type="library" name="Maven: net.jcip:jcip-annotations:1.0" level="project" />
     <orderEntry type="library" name="Maven: com.ibm.watson.developer_cloud:visual-recognition:3.5.2" level="project" />
