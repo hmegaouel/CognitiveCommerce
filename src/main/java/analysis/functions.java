@@ -36,19 +36,19 @@ public class functions {
     public static HashMap<String,Double> getSentiment(JSONArray keywords, String body) throws IOException, JSONException {
         HashMap<String,Double> sentiments = new HashMap<String,Double>();
         if (keywords == null || keywords.length() == 0) {
-            print("NO KEYWORDS");
+            //print("NO KEYWORDS");
             return sentiments;
         }
         String word = "";
         for (int i=0;i<keywords.length();i++) {
             word += keywords.getJSONObject(i).getString("text").replaceAll("[^A-Za-z0-9 ]", "")+"|";
         }
-        print("About to do alchemypostrequest");
-        print(word);
+        //print("About to do alchemypostrequest");
+        //print(word);
         String stuff = "outputMode=json&text="+ URLEncoder.encode(body, "UTF-8")+"&targets="+word;
-        print(stuff);
+        //print(stuff);
         String answer = download.alchemyPostRequest("https://gateway-a.watsonplatform.net/calls/text/TextGetTargetedSentiment",stuff);
-        print(new JSONObject(answer).getString("status"));
+        //print(new JSONObject(answer).getString("status"));
         if (new JSONObject(answer).has("statusInfo")) return sentiments;
         JSONArray sents = new JSONObject(answer).getJSONArray("results");
         for (int i=0;i<sents.length();i++) {
@@ -141,10 +141,11 @@ public class functions {
             System.out.print(e.score+";");
         }
         Collections.sort(list, new MyJSONComparator());
-        System.out.println("**************");
+        /*System.out.println("**************");
         for (eventToCompare e : list) {
             System.out.print(e.score+";");
         }
+        */
         jo.put(list.get(0).name.get("title").toString(), list.get(0).name);
         if (list.size()>1) {
             jo.put(list.get(1).name.get("title").toString(), list.get(1).name);

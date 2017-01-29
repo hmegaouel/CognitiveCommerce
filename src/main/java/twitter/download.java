@@ -14,9 +14,9 @@ public class download {
 	
 	public static String alchemyPostRequest(String urlString, String stuff) throws IOException {
 		
-		tweet.print("Post from "+urlString);
-		tweet.print("Stuff:");
-		tweet.print(stuff);
+		//tweet.print("Post from "+urlString);
+		//tweet.print("Stuff:");
+		//tweet.print(stuff);
 		String data = "";
         InputStream iStream = null;
         HttpURLConnection urlConnection = null;
@@ -33,7 +33,6 @@ public class download {
 	        // Connecting to url
 	        OutputStreamWriter writer = new OutputStreamWriter(urlConnection.getOutputStream());
 
-			System.out.println("post parameters");
 	        writer.write(stuff);
 	        writer.flush();
 			urlConnection.getOutputStream().close();
@@ -51,8 +50,6 @@ public class download {
 	        }
 	
 	        data = sb.toString();
-			System.out.println("DATA");
-			System.out.println(data);
 	
 	        br.close();
 

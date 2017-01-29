@@ -30,7 +30,7 @@ public class tweet {
 	}
 	
 	public void getTweets(String twitURL) throws IOException, JSONException, ParseException {
-		System.out.println("start");
+		//System.out.println("start");
 		if (w<1) {
 			if (twitURL == null) {
 				String okSearch = "from:"+twitterUser+"&size=100";
@@ -41,6 +41,7 @@ public class tweet {
 			JSONArray tweets = new JSONObject(data).getJSONArray("tweets");
 			print("Working on "+w*100+"-"+((w+1)*100)+" tweets");
 			w = w+1;
+			print("Number of tweets: "+tweets.length());
 			for (int i=0; i<tweets.length(); i++) {
 				JSONObject msg = tweets.getJSONObject(i).getJSONObject("message");
 				String body = msg.getString("body");

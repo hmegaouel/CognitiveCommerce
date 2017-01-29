@@ -23,6 +23,7 @@ import java.util.*;
 public class restApi {
 
     final bdd bdd = new bdd();
+    static int connections;
 
     class ev {
         private String name;
@@ -48,6 +49,8 @@ public class restApi {
     @Path("/event/{twitter}/{fb}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response event(@PathParam("twitter") String twitterUsername, @PathParam("fb") String fbToken) throws ParseException, IOException {
+        connections++;
+        System.out.println("Connections: "+connections);
         List<Events> events = bdd.searchByCity("Paris");
         final Date date = new date().getDate();
         tweet twit = new tweet(twitterUsername,date);
@@ -62,6 +65,8 @@ public class restApi {
         im.processImages(null);
         allResult.putAll(im.imageDb);
         String best = functions.getBestEvent(events, allResult, date).toString();
+        connections--;
+        System.out.println("Closing, connections left: "+connections);
         return Response.status(200).entity(best).build();
     }
 
@@ -70,6 +75,8 @@ public class restApi {
     @Path("/twitter/{param}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTwitter(@PathParam("param") String twitterUsername) throws ParseException, IOException {
+        connections++;
+        System.out.println("Connections: "+connections);
         List<Events> events = bdd.searchByCity("Paris");
         final Date date = new date().getDate();
         tweet twit = new tweet(twitterUsername,date);
@@ -77,6 +84,8 @@ public class restApi {
         HashMap<String, Element> allResult = new HashMap<String, Element>();
         allResult.putAll(twit.result);
         String best = functions.getBestEvent(events, allResult, date).toString();
+        connections--;
+        System.out.println("Closing, connections left: "+connections);
         return Response.status(200).entity(best).build();
     }
 
@@ -85,6 +94,8 @@ public class restApi {
     @Path("/fb/{param}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFb(@PathParam("param") String fbToken) throws ParseException, IOException {
+        connections++;
+        System.out.println("Connections: "+connections);
         List<Events> events = bdd.searchByCity("Paris");
         final Date date = new date().getDate();
         Facebook fb = new Facebook(date, fbToken);
@@ -93,6 +104,8 @@ public class restApi {
         HashMap<String, Element> allResult = new HashMap<String, Element>();
         allResult.putAll(fb.result);
         String best = functions.getBestEvent(events, allResult, date).toString();
+        connections--;
+        System.out.println("Closing, connections left: "+connections);
         return Response.status(200).entity(best).build();
     }
 }
