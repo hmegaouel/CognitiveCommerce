@@ -34,6 +34,8 @@ public class RecupCoordGPS {
         	Double lat = location.getDouble("lat");
         	Double lng = location.getDouble("lng");
 
+			System.out.println(lat+";"+lng);
+
         	double resGPS[] = {lat,lng};
             return resGPS;
     	}

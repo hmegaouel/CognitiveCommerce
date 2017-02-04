@@ -22,9 +22,13 @@ public class bdd {
     private String account = "3f53d18a-bd59-463c-9eca-5c37a5d02e5a-bluemix";
     private CloudantClient client;
     private static Database db;
+    private static double lat;
+    private static double lon;
 
-    public bdd() {
+    public bdd(double lat, double lon) {
 
+        this.lat = lat;
+        this.lon = lon;
         System.out.println("Connecting to bdd");
         client = ClientBuilder.account(account)
                 .username(key)
@@ -59,36 +63,34 @@ public class bdd {
         return Math.sqrt(distance);
     }
 
-    public static List<Events> searchByCity(String searchString) {
-
-        String selector = "{ \"selector\": {\"city\": "+searchString+"},\"fields\": [\"title\",\"city\",\"date_start\"] }";
-        List<JsonObject> res = db.findByIndex(selector, JsonObject.class);
-        List<Events> events = new ArrayList<Events>();
-        //int notnull = 0; int anull = 0;
-        for(JsonObject o : res){
-            //System.out.println(o);
-            JsonElement tags = o.get("tags");
-
-            if (tags == null) {
-                //anull++;
-            } else {
-                //notnull++;
-                String[] tagsString = tags.toString().replace("\"","").split(",");
-                events.add(new Events(o,new ArrayList<String>(Arrays.asList(tagsString))));
-            }
-        }
-        return events;
-    }
-
-    public void getAll() throws IOException {
+    public static List<Events> searchByCity() throws IOException {
 
         List<JsonObject> allFoos = db.getAllDocsRequestBuilder().includeDocs(true).build()
                 .getResponse().getDocsAs(JsonObject.class);
-
+        List<Events> events = new ArrayList<Events>();
         for(JsonObject o : allFoos){
-            System.out.println(o);
+            if (o.has("latlon") && o.has("city")) {
+                JsonElement latlon = o.get("latlon");
+                JsonElement city = o.get("city");
+                String[] latlonString = latlon.toString().replace("[","").replace("]","").split(",");
+                if (latlonString.length == 2) {
+                    double elat = Double.parseDouble(latlonString[0]);
+                    double elon = Double.parseDouble(latlonString[1]);
+                    double score = distance(lat, elat, lon, elon);
+                    if (score < 20000) {
+                        JsonElement tags = o.get("tags");
+                        if (tags == null) {
+                            //anull++;
+                        } else {
+                            //notnull++;
+                            String[] tagsString = tags.toString().replace("\"","").split(",");
+                            events.add(new Events(o,new ArrayList<String>(Arrays.asList(tagsString))));
+                        }
+                    }
+                }
+            }
         }
-
+        return events;
     }
 
 }

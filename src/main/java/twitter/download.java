@@ -13,7 +13,6 @@ public class download {
 	private static String twitterPass = "bBdtlQg6vx";
 	
 	public static String alchemyPostRequest(String urlString, String stuff) throws IOException {
-		
 		//tweet.print("Post from "+urlString);
 		//tweet.print("Stuff:");
 		//tweet.print(stuff);
@@ -36,31 +35,32 @@ public class download {
 	        writer.write(stuff);
 	        writer.flush();
 			urlConnection.getOutputStream().close();
-	
+
 	        // Reading data from url
 	        iStream = urlConnection.getInputStream();
-	
+
 	        BufferedReader br = new BufferedReader(new InputStreamReader(iStream, "UTF-8"));
-	
+
 	        StringBuffer sb = new StringBuffer();
-	
+
 	        String line = "";
 	        while( ( line = br.readLine()) != null){
 	            sb.append(line);
 	        }
-	
+
 	        data = sb.toString();
-	
 	        br.close();
 
 	    } catch(Exception e){
 	        System.out.println("Exception while downloading url"+ e.toString());
+	        return "";
 	    } finally{
 	        iStream.close();
 	        urlConnection.disconnect();
+	        System.out.println("Finished getting data");
+			return data;
 	    }
-	    return data;
-		
+
 	}
 	
 public static String downloadURL(String urlString) throws IOException {
@@ -99,11 +99,12 @@ public static String downloadURL(String urlString) throws IOException {
 
     }catch(Exception e){
         System.out.println("Exception while downloading url"+ e.toString());
+        return "";
     }finally{
         iStream.close();
         urlConnection.disconnect();
+        return data;
     }
-    return data;
 	}
 
 }

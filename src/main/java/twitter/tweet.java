@@ -44,40 +44,55 @@ public class tweet {
 			print("Number of tweets: "+tweets.length());
 			for (int i=0; i<tweets.length(); i++) {
 				JSONObject msg = tweets.getJSONObject(i).getJSONObject("message");
-				String body = msg.getString("body");
-				JSONArray hashtags = msg.getJSONObject("twitter_entities").getJSONArray("hashtags"); //.text
-				JSONArray arrobasetags = msg.getJSONObject("twitter_entities").getJSONArray("user_mentions"); //.screen_name
-				body = removeHashtags(hashtags,body);
-				body = removeArrobase(arrobasetags,body);
-				JSONArray keywords = functions.getKeywords(body);
-				String datem = msg.getString("postedTime");
-				Date dd = main.date.twitterinputFormat.parse(datem);
-				HashMap<String,Double> sentiments = functions.getSentiment(keywords,body);
-				//print(body);
-				for (String key : sentiments.keySet()) {
-					if (result.containsKey(key)){
-						Element old = result.get(key);
-						old.setSentiment(old.sentiment+sentiments.get(key));
-						result.put(key, old);
-					} else {
-						Element entry = new Element(sentiments.get(key),dd);
-						result.put(key, entry);
+				System.out.println(msg);
+				if (msg.has("body") && msg.has("twitter_entities") && msg.has("postedTime")) {
+					if (msg.getJSONObject("twitter_entities").has("hashtags") && msg.getJSONObject("twitter_entities").has("user_mentions")) {
+						String body = msg.getString("body");
+						JSONArray hashtags = msg.getJSONObject("twitter_entities").getJSONArray("hashtags"); //.text
+						JSONArray arrobasetags = msg.getJSONObject("twitter_entities").getJSONArray("user_mentions"); //.screen_name
+						body = removeHashtags(hashtags,body);
+						body = removeArrobase(arrobasetags,body);
+						JSONArray keywords = functions.getKeywords(body);
+						String datem = msg.getString("postedTime");
+						Date dd = main.date.twitterinputFormat.parse(datem);
+						if (keywords.length()>0) {
+							HashMap<String,Double> sentiments = functions.getSentiment(keywords,body);
+							for (String key : sentiments.keySet()) {
+								if (result.containsKey(key)){
+									Element old = result.get(key);
+									old.setSentiment(old.sentiment+sentiments.get(key));
+									result.put(key, old);
+								} else {
+									Element entry = new Element(sentiments.get(key),dd);
+									result.put(key, entry);
+								}
+							}
+						}
 					}
 				}
 			}
-			int results = new JSONObject(data).getJSONObject("search").getInt("results");
-			int current = new JSONObject(data).getJSONObject("search").getInt("current");
-			if (current<results) {
-				String url =
-						new JSONObject(data).getJSONObject("related")
-						.getJSONObject("next").getString("href");
-				getTweets(url);
+			JSONObject dataObj = new JSONObject(data);
+			if (dataObj.has("search")) {
+				JSONObject searchObj = dataObj.getJSONObject("search");
+				if (searchObj.has("results") && searchObj.has("current")) {
+					int results = searchObj.getInt("results");
+					int current = searchObj.getInt("current");
+					if (current<results) {
+						String url =
+								new JSONObject(data).getJSONObject("related")
+										.getJSONObject("next").getString("href");
+						getTweets(url);
+					}
+				}
 			}
 		}
 		
 	}
 
 	private String removeHashtags(JSONArray hashtags, String body) throws JSONException {
+		if (body == null) {
+			return "";
+		}
 		for (int j=0; j<hashtags.length();j++) {
 			String hashtg = hashtags.getJSONObject(j).getString("text");
 			hastags.add(hashtg);
@@ -88,6 +103,9 @@ public class tweet {
 	}
 	
 	private String removeArrobase(JSONArray arrobasetags, String body) throws JSONException {
+		if (body == null) {
+			return "";
+		}
 		for (int j=0; j<arrobasetags.length();j++) {
 			String arro = arrobasetags.getJSONObject(j).getString("screen_name");
 			arrotags.add(arro);

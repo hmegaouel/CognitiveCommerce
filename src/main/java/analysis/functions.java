@@ -22,41 +22,54 @@ public class functions {
     private static Logger log = LoggerFactory.getLogger(functions.class);
 
     public static JSONArray getKeywords(String body) throws IOException, JSONException {
-        String stuff = "outputMode=json&text="+ URLEncoder.encode(body, "UTF-8");
-        String answer = download.alchemyPostRequest("https://gateway-a.watsonplatform.net/calls/text/TextGetRankedKeywords",stuff);
-        JSONObject ans = new JSONObject(answer);
-        //System.out.println(ans);
-        if (ans.has("keywords")) {
-            JSONArray keywords = ans.getJSONArray("keywords");
-            return keywords;
+        if ((body != null) && (body != "")) {
+            String stuff = "outputMode=json&text="+ URLEncoder.encode(body, "UTF-8");
+            String answer = download.alchemyPostRequest("https://gateway-a.watsonplatform.net/calls/text/TextGetRankedKeywords",stuff);
+            JSONObject ans = new JSONObject(answer);
+            System.out.println(ans);
+            if (ans.has("keywords")) {
+                JSONArray keywords = ans.getJSONArray("keywords");
+                System.out.println("Done getting keywords, length: "+keywords.length());
+                return keywords;
+            }
         }
-        return null;
+        System.out.println("no keywords");
+        return new JSONArray();
     }
 
     public static HashMap<String,Double> getSentiment(JSONArray keywords, String body) throws IOException, JSONException {
         HashMap<String,Double> sentiments = new HashMap<String,Double>();
         if (keywords == null || keywords.length() == 0) {
-            //print("NO KEYWORDS");
+            print("NO KEYWORDS");
             return sentiments;
         }
         String word = "";
         for (int i=0;i<keywords.length();i++) {
-            word += keywords.getJSONObject(i).getString("text").replaceAll("[^A-Za-z0-9 ]", "")+"|";
+            if (keywords.getJSONObject(i).has("text")) {
+                word += keywords.getJSONObject(i).getString("text").replaceAll("[^A-Za-z0-9 ]", "")+"|";
+            }
         }
         //print("About to do alchemypostrequest");
         //print(word);
         String stuff = "outputMode=json&text="+ URLEncoder.encode(body, "UTF-8")+"&targets="+word;
         //print(stuff);
         String answer = download.alchemyPostRequest("https://gateway-a.watsonplatform.net/calls/text/TextGetTargetedSentiment",stuff);
-        //print(new JSONObject(answer).getString("status"));
-        if (new JSONObject(answer).has("statusInfo")) return sentiments;
-        JSONArray sents = new JSONObject(answer).getJSONArray("results");
-        for (int i=0;i<sents.length();i++) {
-            double score = 0;
-            if (sents.getJSONObject(i).getJSONObject("sentiment").has("score")) {
-                score = sents.getJSONObject(i).getJSONObject("sentiment").getDouble("score");
+        System.out.println("alchemy sentiment answer:");
+        print(answer);
+        JSONObject ansObj = new JSONObject(answer);
+        if (ansObj.has("statusInfo")) {
+            System.out.println("ERROR IN SENTIMENT");
+            return sentiments;
+        }
+        if (ansObj.has("results")) {
+            JSONArray sents = new JSONObject(answer).getJSONArray("results");
+            for (int i=0;i<sents.length();i++) {
+                double score = 0;
+                if (sents.getJSONObject(i).getJSONObject("sentiment").has("score")) {
+                    score = sents.getJSONObject(i).getJSONObject("sentiment").getDouble("score");
+                }
+                sentiments.put(sents.getJSONObject(i).getString("text"), score);
             }
-            sentiments.put(sents.getJSONObject(i).getString("text"), score);
         }
         return sentiments;
     }
