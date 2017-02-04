@@ -54,7 +54,7 @@ public class Word2vec {
         WordVectorSerializer.writeFullModel(word2vec,ModelName);
     }
 
-    public Word2vec(String ModelName, String trainingFile) {
+    public void setUp (String ModelName, String trainingFile) {
         this.ModelName = ModelName;
         try {
             word2vec = WordVectorSerializer.loadFullModel(ModelName);
@@ -65,6 +65,14 @@ public class Word2vec {
             } catch (FileNotFoundException f) {
                 log.error(f.toString());
             }
+        }
+    }
+
+    public Word2vec(String lang) {
+        if (lang == "fr") {
+            this.setUp("model_fr.txt","entrainement_fr_folded.txt");
+        } else if (lang == "en") {
+            this.setUp("model_en.txt","entrainement_en_folded.txt");
         }
     }
 
@@ -80,8 +88,8 @@ public class Word2vec {
 
 
     public static void main(String[] args) throws Exception {
-        Word2vec tt = new Word2vec("pathToSaveModel.txt","raw_sentences.txt");
-        System.out.println(tt.getScore("day","game"));
+        Word2vec tt = new Word2vec("en");
+        //System.out.println(tt.getScore("ordinateur","concert"));
     }
 
 

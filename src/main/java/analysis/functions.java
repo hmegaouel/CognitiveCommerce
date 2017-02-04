@@ -20,6 +20,7 @@ public class functions {
 
     private static NormalizedLevenshtein l = new NormalizedLevenshtein();
     private static Logger log = LoggerFactory.getLogger(functions.class);
+    private static Word2vec word2vec = new Word2vec("fr");
 
     public static JSONArray getKeywords(String body) throws IOException, JSONException {
         if ((body != null) && (body != "")) {
@@ -111,10 +112,10 @@ public class functions {
         //System.out.println(allElements.size());
         for (int i=0;i<event.keywords.size();i++) {
             for (String key : allElements.keySet()) {
-                //score = Word2vec.getScore(key,event.keywords.get(i));
+                score = Word2vec.getScore(key,event.keywords.get(i));
                 long diff = (1+currentDate.getTime()-allElements.get(key).date.getTime())/(1000*60*60*24);
-                //result += (allElements.get(key).sentiment)*(score)/diff;
-                result += (allElements.get(key).sentiment)*(1-l.distance(key, event.keywords.get(i)))/diff;
+                result += (allElements.get(key).sentiment)*(score)/diff;
+                //result += (allElements.get(key).sentiment)*(1-l.distance(key, event.keywords.get(i)))/diff;
             }
         }
         return result;
