@@ -11,12 +11,10 @@ import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.grizzly.http.server.HttpServer;
 
-/**
- * Hello world!
- */
+
 public class App {
 
-    private static final URI BASE_URI = URI.create("https://libtestecp.eu-gb.mybluemix.net/"); //http://localhost:8080/
+    private static final URI BASE_URI = URI.create("http://localhost:8080/"); // https://libtestecp.eu-gb.mybluemix.net/
     public static final String ROOT_PATH = "api";
 
     public static void main(String[] args) {

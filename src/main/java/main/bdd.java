@@ -17,8 +17,8 @@ import java.util.*;
  */
 public class bdd {
 
-    private String key = "iontrandeadegralinedleel";
-    private String pass = "02ca06c41949d761c1f08364bd15d15b7774cf7c";
+    private String key = "isermaravelturpealldomea"; //iontrandeadegralinedleel
+    private String pass = "8ace1f814b56e141a107e9883abac86dc798fd6f"; //02ca06c41949d761c1f08364bd15d15b7774cf7c
     private String account = "3f53d18a-bd59-463c-9eca-5c37a5d02e5a-bluemix";
     private CloudantClient client;
     private static Database db;
