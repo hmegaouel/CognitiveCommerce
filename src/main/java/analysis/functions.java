@@ -1,17 +1,22 @@
 package analysis;
 
-import com.google.gson.JsonObject;
+import com.google.gson.*;
+
 import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import twitter.Element;
 import twitter.Events;
 import twitter.download;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.Map.Entry;
@@ -21,6 +26,60 @@ public class functions {
     private static NormalizedLevenshtein l = new NormalizedLevenshtein();
     //private static Word2vec word2vec = new Word2vec("fr");
 
+	
+	//Input: link to the desired image
+	//Output: hashmap of weighted tags
+	public static HashMap<String,Double> getImageTags(String link) throws IOException{
+		
+        HashMap<String,Double> results = new HashMap<String,Double>();
+		String api_key = "ed9d3c4315dc0f80ede5e87d550e9816529b211d";
+		String classify_endpoint = "https://gateway-a.watsonplatform.net/visual-recognition/api/v3/classify";
+		String full_url = classify_endpoint + "?api_key=" + api_key + "&url=" + link + "&version=2016-05-20";
+		String data = "";
+        InputStream iStream = null;
+        HttpURLConnection urlConnection = null;
+        
+        try{
+        	// Connexion
+            URL url = new URL(full_url);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.connect();
+
+            // Lecture de la réponse
+            iStream = urlConnection.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(iStream, "UTF-8"));
+            StringBuffer sb = new StringBuffer();
+            String line = "";
+            while( ( line = br.readLine()) != null){
+            	sb.append(line);
+            	}
+            data = sb.toString();
+            br.close();
+        }
+        
+        catch(Exception e){
+        	System.out.println("Exception while downloading url "+ e.toString());
+        }
+        
+        finally{
+        	iStream.close();
+        	urlConnection.disconnect();
+        }
+        
+        
+        JsonParser parser = new JsonParser();
+        JsonObject server_answer = (JsonObject) parser.parse(data);
+        JsonArray tags = server_answer.getAsJsonArray("images").get(0).getAsJsonObject().getAsJsonArray("classifiers").get(0).getAsJsonObject().getAsJsonArray("classes");
+        
+        for(JsonElement e : tags){
+        	results.put(e.getAsJsonObject().get("class").getAsString(), e.getAsJsonObject().get("score").getAsDouble());
+        }
+        
+		return results;
+	}
+	
+	
+	
     public static JSONArray getKeywords(String body) throws IOException, JSONException {
         if ((body != null) && (body != "")) {
             String stuff = "outputMode=json&text="+ URLEncoder.encode(body, "UTF-8");

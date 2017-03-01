@@ -1,5 +1,7 @@
 package com.example;
 
+import instagram.Instagram;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
@@ -15,15 +17,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import analysis.functions;
+
 import com.ibm.json.java.JSON;
 import com.ibm.json.java.JSONArray;
 import com.ibm.json.java.JSONObject;
+
 import fb.Facebook;
 import fb.image;
 import main.RecupCoordGPS;
 import main.bdd;
 import main.date;
+
 import org.json.JSONException;
+
 import twitter.Element;
 import twitter.Events;
 import twitter.download;
@@ -67,10 +73,18 @@ public class HelloResource {
 		return myJSONObj.toString();
 	}*/
 
+	
+	
+	
+	
+	/*
+	 * Instagram ajouté. Pour l'instant on utilise un token codé en dur, car une autorisation d'accès à instagram doit être obtenue coté appli mobile pour chaque nouvel utilisateur
+	 */
+	
 	@GET
-	@Path("/event/{twitter}/{fb}")
+	@Path("/event/{twitter}/{fb}/{insta}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String event(@PathParam("twitter") String twitterUsername, @PathParam("fb") String fbToken) throws ParseException, IOException, JSONException {
+	public String event(@PathParam("twitter") String twitterUsername, @PathParam("fb") String fbToken, @PathParam("insta") String instaToken) throws ParseException, IOException, JSONException {
 		connections++;
 		System.out.println("Connections: "+connections);
 		List<Events> events = bdd.searchByCity();
@@ -80,6 +94,15 @@ public class HelloResource {
 		Facebook fb = new Facebook(date, fbToken);
 		fb.processPosts(null);
 		fb.processResults();
+		
+		//Exemple tags de la première image du compte instagram "cog.comm"
+		//
+		Instagram insta = new Instagram();
+		List<String> images = insta.getUserImages(Instagram.access_token);
+		HashMap<String,Double> tags = functions.getImageTags(images.get(0));
+		System.out.println(tags);
+		//
+		
 		HashMap<String, Element> allResult = new HashMap<String, Element>();
 		allResult.putAll(fb.result);
 		allResult.putAll(twit.result);
