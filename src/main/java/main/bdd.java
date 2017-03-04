@@ -17,13 +17,18 @@ import java.util.List;
  */
 public class bdd {
 
-    private String key = "isermaravelturpealldomea"; //iontrandeadegralinedleel
-    private String pass = "8ace1f814b56e141a107e9883abac86dc798fd6f"; //02ca06c41949d761c1f08364bd15d15b7774cf7c
+    private static String key = "isermaravelturpealldomea"; //iontrandeadegralinedleel
+    private static String pass = "8ace1f814b56e141a107e9883abac86dc798fd6f"; //02ca06c41949d761c1f08364bd15d15b7774cf7c
     private String account = "3f53d18a-bd59-463c-9eca-5c37a5d02e5a-bluemix";
     private CloudantClient client;
     private static Database db;
     private static double lat;
     private static double lon;
+    private static int radius;
+    private static String dateUntil;
+
+    private static String baseurl_search = "https://public.opendatasoft.com/api/records/1.0/search/?dataset=evenements-publics-cibul&facet=date_start&refine.date_start=";
+    private static String params = "&sort=date_start&rows=9999";
 
     public bdd(double lat, double lon) {
 
@@ -36,6 +41,12 @@ public class bdd {
                 .build();
         db = client.database("events", false);
         this.checkConnection();
+    }
+
+    public void setParams(int radius, String dateString) {
+        System.out.println("Setting radius:"+radius+", and dateUntil:"+dateString);
+        this.radius = radius;
+        this.dateUntil = dateString;
     }
 
     public void checkConnection() {
@@ -65,8 +76,10 @@ public class bdd {
 
     public static List<Events> searchByCity() throws IOException {
 
-        List<JsonObject> allFoos = db.getAllDocsRequestBuilder().includeDocs(true).build()
-                .getResponse().getDocsAs(JsonObject.class);
+        List<JsonObject> allFoos = db
+                .findByIndex("{ \"selector\": {\"date_start\": "+dateUntil+"},\"fields\": [\"title\",\"city\",\"date_start\"] }",
+                        JsonObject.class);
+
         List<Events> events = new ArrayList<Events>();
         for(JsonObject o : allFoos){
             if (o.has("latlon") && o.has("city")) {
@@ -77,7 +90,7 @@ public class bdd {
                     double elat = Double.parseDouble(latlonString[0]);
                     double elon = Double.parseDouble(latlonString[1]);
                     double score = distance(lat, elat, lon, elon);
-                    if (score < 20000) {
+                    if (score < radius) {
                         JsonElement tags = o.get("tags");
                         if (tags == null) {
                             //anull++;

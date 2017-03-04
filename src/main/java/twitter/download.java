@@ -83,14 +83,6 @@ public class download {
 	
 public static String downloadURL(String urlString) throws IOException {
 
-//		HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(twitterUser, twitterPass);
-//        ClientConfig clientConfig = new ClientConfig();
-//        clientConfig.register(feature) ;
-//        Client client = ClientBuilder.newClient(clientConfig);
-//        WebTarget webTarget = client.target(urlString);
-//        String response = webTarget.request().get(String.class);
-//        return response;
-
 	String data = "";
 	InputStream iStream = null;
 	HttpURLConnection urlConnection = null;

@@ -8,7 +8,7 @@ public class date {
 	
 	public final static DateFormat twitterinputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 	public final static DateFormat fbinputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-	public final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	public final static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	public Date getDate(){
 		Date date = new Date();

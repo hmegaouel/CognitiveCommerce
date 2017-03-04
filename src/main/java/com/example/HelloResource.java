@@ -1,13 +1,11 @@
 package com.example;
 
+import com.google.gson.JsonObject;
 import instagram.Instagram;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -20,7 +18,7 @@ import analysis.functions;
 
 import com.ibm.json.java.JSON;
 import com.ibm.json.java.JSONArray;
-import com.ibm.json.java.JSONObject;
+import org.json.JSONObject;
 
 import fb.Facebook;
 import fb.image;
@@ -47,15 +45,44 @@ public class HelloResource {
 	//double[] coords = null;
 	final main.bdd bdd = new bdd(48.8534100, 2.3488000);
 	static int connections;
+	int distance = 20000;
+	String dateString;
 
 	@GET
 	@Path("/test")
-	public String showTest() throws IOException {
-		download d = new download();
-		String outp = d.downloadURL("https://cdeservice.eu-gb.mybluemix.net/api/v1/messages/search?q=from:KimKardashian&size=100");
-		System.out.println(outp);
+	public String showTest() throws IOException, JSONException {
+//		download d = new download();
+//		String outp = d.downloadURL("https://cdeservice.eu-gb.mybluemix.net/api/v1/messages/search?q=from:KimKardashian&size=100");
+//		System.out.println(outp);
 		JSONObject myJSONObj = new JSONObject();
 		myJSONObj.put("okay", "true");
+		return myJSONObj.toString();
+	}
+
+	@GET
+	@Path("/set/{distance}/{date}")
+	public String set(@PathParam("distance") String distance, @PathParam("date") String dateString) throws IOException, JSONException {
+		if (dateString != "") {
+			this.dateString = dateString; //de la forme annee-mois-jour
+		}
+		if (distance != "") {
+			this.distance = Integer.parseInt(distance); //rayon en mètres
+		}
+		bdd.setParams(this.distance, this.dateString);
+		JSONObject myJSONObj = new JSONObject();
+		myJSONObj.put("date", this.dateString);
+		myJSONObj.put("radius", this.distance);
+		return myJSONObj.toString();
+	}
+
+	@GET
+	@Path("/bdd")
+	public String showBdd() throws IOException, JSONException {
+		List<Events> bddDocs = bdd.searchByCity();
+		JSONObject myJSONObj = new JSONObject();
+		for(Events e : bddDocs) {
+			myJSONObj.put(e.name.toString(), Arrays.toString(e.keywords.toArray()));
+		}
 		return myJSONObj.toString();
 	}
 
