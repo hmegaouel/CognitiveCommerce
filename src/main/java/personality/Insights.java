@@ -5,10 +5,10 @@ import com.ibm.watson.developer_cloud.personality_insights.v3.model.Content;
 import com.ibm.watson.developer_cloud.personality_insights.v3.model.Profile;
 import com.ibm.watson.developer_cloud.personality_insights.v3.model.ProfileOptions;
 import com.ibm.watson.developer_cloud.util.GsonSingleton;
+import main.Request;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import twitter.download;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Insights {
+
     private Content content;
     private PersonalityInsights service = new PersonalityInsights("2016-10-20");
     private JSONObject twitterResults = new JSONObject();
@@ -24,6 +25,9 @@ public class Insights {
     int w = 0;
     private HashMap<String,Double> scores = new HashMap<String, Double>();
     private Profile profile;
+
+    private static String bluemixTwitterUsername = "82c55037-92c8-421f-8d4c-9c9e56b68809";
+    private static String bluemixTwitterPass = "e6TaVDzihc";
 
     /**
      * Instantiates a new Personality Insights service.
@@ -37,12 +41,13 @@ public class Insights {
     public void getTweets(String twitURL) throws IOException, JSONException, ParseException {
         System.out.println("Working on "+w*100+"-"+((w+1)*100)+" tweets");
         if (w<1) {
+            String searchParameter = "";
             if (twitURL == null) {
                 String okSearch = "from:"+twitterUser+"&size=100";
-                twitURL = "https://cdeservice.eu-gb.mybluemix.net/api/v1/messages/search?q="+okSearch;
+                searchParameter = "q="+okSearch;
+                twitURL = "https://cdeservice.eu-gb.mybluemix.net/api/v1/messages/search";
             }
-            new download();
-            String data = download.downloadURL(twitURL);
+            String data = new Request("GET", twitURL, searchParameter, new String[] {bluemixTwitterUsername,bluemixTwitterPass} ).getRequest();
             JSONArray tweets = new JSONObject(data).getJSONArray("tweets");
             w = w+1;
             for (int i=0; i<tweets.length(); i++) {

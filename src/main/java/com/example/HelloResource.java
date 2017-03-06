@@ -1,6 +1,5 @@
 package com.example;
 
-import com.google.gson.JsonObject;
 import instagram.Instagram;
 
 import java.io.IOException;
@@ -12,26 +11,22 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-import analysis.functions;
-
-import com.ibm.json.java.JSON;
-import com.ibm.json.java.JSONArray;
 import org.json.JSONObject;
 
 import fb.Facebook;
 import fb.image;
-import main.RecupCoordGPS;
 import main.bdd;
 import main.date;
 
 import org.json.JSONException;
 
-import twitter.Element;
-import twitter.Events;
-import twitter.download;
+import helpers.Element;
+import helpers.Events;
 import twitter.tweet;
+
+import static helpers.EventFunctions.getBestEvent;
+import static helpers.ImageFunctions.getImageTags;
 
 
 // This class define the RESTful API to fetch the database service information
@@ -120,13 +115,9 @@ public class HelloResource {
 		twit.getTweets(null);
 		Facebook fb = new Facebook(date, fbToken);
 		fb.processPosts(null);
-		fb.processResults();
-		
-		//Exemple tags de la première image du compte instagram "cog.comm"
-		//
 		Instagram insta = new Instagram();
 		List<String> images = insta.getUserImages(Instagram.access_token);
-		HashMap<String,Double> tags = functions.getImageTags(images.get(0));
+		HashMap<String,Double> tags = getImageTags(images.get(0));
 		System.out.println(tags);
 		//
 		
@@ -136,7 +127,7 @@ public class HelloResource {
 		image im = new image(fbToken);
 		im.processImages(null);
 		allResult.putAll(im.imageDb);
-		String best = functions.getBestEvent(events, allResult, date).toString();
+		String best = getBestEvent(events, allResult, date).toString();
 		connections--;
 		System.out.println("Closing, connections left: "+connections);
 		return best;
@@ -156,7 +147,7 @@ public class HelloResource {
 		System.out.println("Done getting tweets, checking results");
 		HashMap<String, Element> allResult = new HashMap<String, Element>();
 		allResult.putAll(twit.result);
-		String best = functions.getBestEvent(events, allResult, date).toString();
+		String best = getBestEvent(events, allResult, date).toString();
 		connections--;
 		System.out.println("Closing, connections left: "+connections);
 		return best;
@@ -173,22 +164,12 @@ public class HelloResource {
 		final Date date = new date().getDate();
 		Facebook fb = new Facebook(date, fbToken);
 		fb.processPosts(null);
-		fb.processResults();
 		HashMap<String, Element> allResult = new HashMap<String, Element>();
 		allResult.putAll(fb.result);
-		String best = functions.getBestEvent(events, allResult, date).toString();
+		String best = getBestEvent(events, allResult, date).toString();
 		connections--;
 		System.out.println("Closing, connections left: "+connections);
 		return best;
 	}
 
-/*	@GET
-	@Path("/test")
-	@Produces("application/json")
-	public String getInformation() throws Exception, IOException {
-        JSONObject myJSONObj = new JSONObject();
-        myJSONObj.put("message", "Hello World!");
-        return myJSONObj.toString();
-        
-	}*/
 }

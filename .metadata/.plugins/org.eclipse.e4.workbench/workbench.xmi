@@ -1188,7 +1188,7 @@
     <tags>View</tags>
     <tags>categoryTag:General</tags>
   </descriptors>
-  <descriptors xmi:id="_OQYjUP6TEeav29RtW6zEaw" elementId="com.ibm.rsaz.analysis.core.ui.views.ResultsFrameView" label="R&#xe9;sultats de Software Analyzer" iconURI="platform:/plugin/com.ibm.rsaz.analysis.core.ui/icons/analysis_co.gif" category="org.eclipse.e4.secondaryDataStack" closeable="true" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView">
+  <descriptors xmi:id="_OQYjUP6TEeav29RtW6zEaw" elementId="com.ibm.rsaz.helpers.core.ui.views.ResultsFrameView" label="R&#xe9;sultats de Software Analyzer" iconURI="platform:/plugin/com.ibm.rsaz.helpers.core.ui/icons/analysis_co.gif" category="org.eclipse.e4.secondaryDataStack" closeable="true" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView">
     <tags>View</tags>
     <tags>categoryTag:Software Analyzer</tags>
   </descriptors>
@@ -2494,9 +2494,9 @@
   <commands xmi:id="_Oue0kf6TEeav29RtW6zEaw" elementId="AUTOGEN:::org.eclipse.wst.web.ui.wizardsActionSet/org.eclipse.wst.web.ui.actions.newHTMLFile" commandName="HTML" description="Create a new HTML page" category="_OEdnMP6TEeav29RtW6zEaw"/>
   <commands xmi:id="_OufboP6TEeav29RtW6zEaw" elementId="AUTOGEN:::org.eclipse.wst.ws.explorer.explorer/org.eclipse.wst.ws.internal.explorer.action.LaunchWSEAction" commandName="Launch the Web Services Explorer" description="Launch the Web Services Explorer" category="_OEdnMP6TEeav29RtW6zEaw"/>
   <commands xmi:id="_Oufbof6TEeav29RtW6zEaw" elementId="AUTOGEN:::com.ibm.etools.j2ee.J2eeMainActionSet6/com.ibm.etools.j2ee.actions.NewEJB" commandName="Create an Enterprise Bean" description="Create an Enterprise Bean" category="_OEdnMP6TEeav29RtW6zEaw"/>
-  <commands xmi:id="_OugCsP6TEeav29RtW6zEaw" elementId="AUTOGEN:::org.eclipse.debug.ui.analysisActionSet/com.ibm.rsaz.analysis.core.ui.actions.AnalysisDropDownAction" commandName="Analyse..." category="_OEdnMP6TEeav29RtW6zEaw"/>
-  <commands xmi:id="_OugCsf6TEeav29RtW6zEaw" elementId="AUTOGEN:::org.eclipse.debug.ui.analysisActionSet/com.ibm.rsaz.analysis.core.ui.actions.RunLastAnalysis" commandName="Analyser le dernier lancement" category="_OEdnMP6TEeav29RtW6zEaw"/>
-  <commands xmi:id="_OugpwP6TEeav29RtW6zEaw" elementId="AUTOGEN:::org.eclipse.debug.ui.analysisActionSet/com.ibm.rsaz.analysis.core.ui.internal.actions.OpenAnalysisConfigurations" commandName="Analyse..." description="Software Analyzer" category="_OEdnMP6TEeav29RtW6zEaw"/>
+  <commands xmi:id="_OugCsP6TEeav29RtW6zEaw" elementId="AUTOGEN:::org.eclipse.debug.ui.analysisActionSet/com.ibm.rsaz.helpers.core.ui.actions.AnalysisDropDownAction" commandName="Analyse..." category="_OEdnMP6TEeav29RtW6zEaw"/>
+  <commands xmi:id="_OugCsf6TEeav29RtW6zEaw" elementId="AUTOGEN:::org.eclipse.debug.ui.analysisActionSet/com.ibm.rsaz.helpers.core.ui.actions.RunLastAnalysis" commandName="Analyser le dernier lancement" category="_OEdnMP6TEeav29RtW6zEaw"/>
+  <commands xmi:id="_OugpwP6TEeav29RtW6zEaw" elementId="AUTOGEN:::org.eclipse.debug.ui.analysisActionSet/com.ibm.rsaz.helpers.core.ui.internal.actions.OpenAnalysisConfigurations" commandName="Analyse..." description="Software Analyzer" category="_OEdnMP6TEeav29RtW6zEaw"/>
   <commands xmi:id="_OuhQ0P6TEeav29RtW6zEaw" elementId="AUTOGEN:::com.ibm.ws.appconversion.was2Liberty.ActionSet/com.ibm.ws.report.was2liberty.menu.PurchaseReportAction" commandName="G&#xe9;n&#xe9;rer un rapport d'&#xe9;valuation d'application" description="G&#xe9;n&#xe9;rer un rapport d'&#xe9;valuation d'application" category="_OEdnMP6TEeav29RtW6zEaw"/>
   <commands xmi:id="_OuhQ0f6TEeav29RtW6zEaw" elementId="AUTOGEN:::org.eclipse.birt.report.debug.ui.DeubgScript/org.eclipse.birt.report.debug.ui.DebugScript" commandName="Debug Report" category="_OEdnMP6TEeav29RtW6zEaw"/>
   <commands xmi:id="_Ouh34P6TEeav29RtW6zEaw" elementId="AUTOGEN:::org.eclipse.birt.report.designer.ui.publishActionSet/org.eclipse.birt.report.designer.ui.TemplatepublisAction" commandName="Register Template with New Report Wizard..." category="_OEdnMP6TEeav29RtW6zEaw"/>

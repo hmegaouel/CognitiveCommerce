@@ -1,4 +1,4 @@
-package twitter;
+package helpers;
 
 import java.util.Date;
 
@@ -11,7 +11,7 @@ public class Element {
 		this.date = d;
 		this.sentiment = s;
 	}
-	
+
 	public void setDate(Date date) {
 		this.date = date;
 	}

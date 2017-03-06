@@ -1,10 +1,13 @@
 package twitter;
 
-import analysis.functions;
+import helpers.Element;
+import helpers.Events;
+import main.Request;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -12,16 +15,23 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import static helpers.EventFunctions.getBestEvent;
+import static helpers.TextFunctions.getKeywords;
+import static helpers.TextFunctions.getSentiment;
+
 public class tweet {
 	
 	private String twitterUser;
 	private ArrayList<String> hastags = new ArrayList<String>();
 	private ArrayList<String> arrotags = new ArrayList<String>();
-	public HashMap<String,Element> result = new HashMap<String,Element>();
+	public HashMap<String, Element> result = new HashMap<String,Element>();
 	private int w = 0;
 	public HashMap<String,Element> positive = new HashMap<String,Element>();
 	public HashMap<String,Element> negative = new HashMap<String,Element>();
 	private final Date currentDate;
+
+	private static String bluemixTwitterUsername = "82c55037-92c8-421f-8d4c-9c9e56b68809";
+	private static String bluemixTwitterPass = "e6TaVDzihc";
 	
 	
 	public tweet(String user, Date date) {
@@ -32,13 +42,14 @@ public class tweet {
 	public void getTweets(String twitURL) throws IOException, JSONException, ParseException {
 		//System.out.println("start");
 		if (w<1) {
+			String searchParameter = "";
 			if (twitURL == null) {
 				String okSearch = "from:"+twitterUser+"&size=100";
 				String okSearchEncoded=java.net.URLEncoder.encode(okSearch,"UTF-8");
-				twitURL = "https://cdeservice.eu-gb.mybluemix.net/api/v1/messages/search?q="+okSearchEncoded;
+				searchParameter = "q="+okSearchEncoded;
+				twitURL = "https://cdeservice.eu-gb.mybluemix.net/api/v1/messages/search";
 			}
-			new download();
-			String data = download.downloadURL(twitURL);
+			String data = new Request("GET", twitURL, searchParameter, new String[] {bluemixTwitterUsername,bluemixTwitterPass} ).getRequest();
 			System.out.println(data);
 			JSONArray tweets = new JSONObject(data).getJSONArray("tweets");
 			print("Working on "+w*100+"-"+((w+1)*100)+" tweets");
@@ -59,13 +70,13 @@ public class tweet {
 						System.out.println("main removing @");
 						body = removeArrobase(arrobasetags,body);
 						System.out.println("main getting keywords");
-						JSONArray keywords = functions.getKeywords(body);
+						JSONArray keywords = getKeywords(body);
 						System.out.println("main getting time");
 						String datem = msg.getString("postedTime");
 						Date dd = main.date.twitterinputFormat.parse(datem);
 						if (keywords.length()>0) {
 							System.out.println("main getting sentiment");
-							HashMap<String,Double> sentiments = functions.getSentiment(keywords,body);
+							HashMap<String,Double> sentiments = getSentiment(keywords,body);
 							System.out.println("main setting result");
 							for (String key : sentiments.keySet()) {
 								if (result.containsKey(key)){
@@ -129,22 +140,6 @@ public class tweet {
 	
 	public static void print(String msg) {
 		System.out.println(msg);
-	}
-	
-	public void processResults(){
-		List<HashMap<String, Element>> resultats = functions.positivenegative(result);
-		positive = resultats.get(0);
-		negative = resultats.get(1);
-		for (String key : positive.keySet()) {
-			functions.print(key+" : "+positive.get(key));
-		}
-		for (String key : negative.keySet()) {
-			functions.print(key+" : "+negative.get(key));
-		}
-	}
-	
-	public JSONObject getEvent(List<Events> events) throws JSONException {
-		return functions.getBestEvent(events, result, currentDate);
 	}
 
 }

@@ -1,17 +1,22 @@
 package fb;
 
-import analysis.functions;
+import main.Request;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import twitter.Element;
-import twitter.Events;
+import helpers.Element;
+import helpers.Events;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import static helpers.EventFunctions.getBestEvent;
+import static helpers.TextFunctions.getKeywords;
+import static helpers.TextFunctions.getSentiment;
 
 public class Facebook {
 	
@@ -20,35 +25,31 @@ public class Facebook {
 	public HashMap<String, Element> negative;
 	private final Date currentDate;
 	private final String token;
-	private download dwld;
-	
+
 	public HashMap<String,Element> result = new HashMap<String,Element>();
 	
 	public Facebook(Date dt, String token) {
 		this.currentDate = dt;
 		this.token = token;
-		this.dwld = new download(token);
-	}
-	
-	public void show() {
-		for (String key : result.keySet()) {
-			Element old = result.get(key);
-			functions.print(key+" : "+old.sentiment+" ("+old.date+")");
-		}
 	}
 	
 	public void processPosts(String url) throws IOException, JSONException, ParseException {
-		
-		functions.print("Getting page "+i);
+
+		System.out.println("Getting page "+i);
 		i++;
 		
 		String posts = null;
+
 		if (url == null) {
-			posts = dwld.downloadURL(new String[] {"posts{message,created_time}"}, null);
+			String urlString ="https://graph.facebook.com/v2.8/me";
+			String[] args = new String[] {"posts{message,created_time}"};
+			String fields = strJoin(args,"%2C");
+			String parameters = "access_token="+token+"&fields="+fields+"&format=json&method=get&pretty=0&suppress_http_code=1";
+			posts = new Request("GET", urlString, parameters, new String[]{}).getData();
 		} else {
-			posts = dwld.downloadURL(null, url);
+			posts = new Request("GET", url, "", new String[]{}).getData();
 		}
-		functions.print(posts);
+		System.out.println(posts);
 		JSONObject fbObj = new JSONObject(posts);
 		if (url == null) fbObj = fbObj.getJSONObject("posts");
 		JSONArray postsObject = fbObj.getJSONArray("data");
@@ -59,17 +60,25 @@ public class Facebook {
 		}
 		if (fbObj.getJSONObject("paging").has("next") && i<3) {
 			processPosts(fbObj.getJSONObject("paging").getString("next"));
-		} else {
-			processResults();
 		}
 
+	}
+
+	public static String strJoin(String[] aArr, String sSep) {
+		StringBuilder sbStr = new StringBuilder();
+		for (int i = 0, il = aArr.length; i < il; i++) {
+			if (i > 0)
+				sbStr.append(sSep);
+			sbStr.append(aArr[i]);
+		}
+		return sbStr.toString();
 	}
 	
 	public void analyseMessage(JSONObject postsObject) throws JSONException, IOException, ParseException {
 		String body = postsObject.getString("message");
-		JSONArray keywords = functions.getKeywords(body);
+		JSONArray keywords = getKeywords(body);
 		//System.out.println(keywords.toString());
-		HashMap<String,Double> sentiments = functions.getSentiment(keywords,body);
+		HashMap<String,Double> sentiments = getSentiment(keywords,body);
 		String datem = postsObject.getString("created_time");
 		Date dd = main.date.fbinputFormat.parse(datem);
 		for (String key : sentiments.keySet()) {
@@ -84,20 +93,8 @@ public class Facebook {
 		}
 	}
 	
-	public void processResults(){
-		List<HashMap<String, Element>> resultats = functions.positivenegative(result);
-		positive = resultats.get(0);
-		negative = resultats.get(1);
-		for (String key : positive.keySet()) {
-			functions.print(key+" : "+positive.get(key));
-		}
-		for (String key : negative.keySet()) {
-			functions.print(key+" : "+negative.get(key));
-		}
-	}
-	
-	public JSONObject getEvent(List<Events> events) throws JSONException {
-		return functions.getBestEvent(events, result, currentDate);
+	public JSONObject getEvent(List<Events> events) throws JSONException, FileNotFoundException {
+		return getBestEvent(events, result, currentDate);
 	}
 
 }

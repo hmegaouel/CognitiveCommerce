@@ -3,10 +3,11 @@ package fb;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.VisualRecognition;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifyImagesOptions;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.VisualClassification;
+import main.Request;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import twitter.Element;
+import helpers.Element;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
@@ -24,23 +25,27 @@ public class image {
 	
 	private VisualRecognition service;
 	public HashMap<String,Element> imageDb;
-	private fb.download download;
 	double max = 1;
+	private String token;
 	
 	public image(String token) {
 		service = new VisualRecognition(VisualRecognition.VERSION_DATE_2016_05_20);
 	    service.setApiKey("e9391b759dfb709442f973a49c65253f17b26b3c");
 	    imageDb = new HashMap<String,Element>();
-		download = new download(token);
+		this.token = token;
 	}
 	
 	public void processImages(String url) throws IOException, JSONException, ParseException {
 		
 		String images = null;
 		if (url == null) {
-			images = download.downloadURL(new String[] {"photos"}, null);
+			String urlString ="https://graph.facebook.com/v2.8/me";
+			String[] args = new String[] {"photos"};
+			String fields = strJoin(args,"%2C");
+			String parameters = "access_token="+token+"&fields="+fields+"&format=json&method=get&pretty=0&suppress_http_code=1";
+			images = new Request("GET", urlString, parameters, new String[]{}).getData();
 		} else {
-			images = download.downloadURL(null, url);
+			images = new Request("GET", url, "", new String[]{}).getData();
 		}
 		//System.out.println(images);
 		JSONObject fbObj = new JSONObject(images);
@@ -80,6 +85,16 @@ public class image {
 		}
 		
 	}
+
+	public static String strJoin(String[] aArr, String sSep) {
+		StringBuilder sbStr = new StringBuilder();
+		for (int i = 0, il = aArr.length; i < il; i++) {
+			if (i > 0)
+				sbStr.append(sSep);
+			sbStr.append(aArr[i]);
+		}
+		return sbStr.toString();
+	}
 	
 	public void processResults(){
 		for (String key : imageDb.keySet()) {
@@ -91,7 +106,7 @@ public class image {
 	
 	public File getImage(String id) throws IOException {
 		File outputFile = new File("output.jpg");
-		String urlString = "https://graph.facebook.com/"+id+"/picture?access_token="+ download.fbKEY;
+		String urlString = "https://graph.facebook.com/"+id+"/picture?access_token="+token;
 		//System.out.println(urlString);
 		URL url = new URL(urlString);
 		BufferedImage image = ImageIO.read(url);
