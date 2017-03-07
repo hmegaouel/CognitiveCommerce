@@ -10,6 +10,9 @@ import com.ibm.watson.developer_cloud.personality_insights.v3.model.Profile;
 
 public class res {
 	
+//returns a HashMap<String, Element> of keywords from consumption preferences with sentiment 1.0, to be added to the HashMap <String,Element>
+//allElements in the event functions (to score the events through Word2vec) 
+	
 		static HashMap<String, Element> resultat=new HashMap<String, Element>();
 		public static HashMap<String, Element> getres (String text) throws JSONException{
 		
