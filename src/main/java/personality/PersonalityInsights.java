@@ -1,4 +1,4 @@
-
+package personality;
 
 import com.ibm.watson.developer_cloud.http.HttpHeaders;
 import com.ibm.watson.developer_cloud.http.HttpMediaType;
