@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-
+package personality;
 
 import com.google.gson.annotations.SerializedName;
 import com.ibm.watson.developer_cloud.service.model.GenericModel;
