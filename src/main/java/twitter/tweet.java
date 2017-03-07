@@ -3,6 +3,9 @@ package twitter;
 import helpers.Element;
 import helpers.Events;
 import main.Request;
+//
+import personality.*;
+//
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,6 +64,11 @@ public class tweet {
 				if (msg.has("body") && msg.has("twitter_entities") && msg.has("postedTime")) {
 					if (msg.getJSONObject("twitter_entities").has("hashtags") && msg.getJSONObject("twitter_entities").has("user_mentions")) {
 						String body = msg.getString("body");
+						//Personalityinsights+consumptionpreferences
+						res resultat=new res();
+						HashMap<String,Element> h= res.getres(body);
+						result.putAll(h);
+						//
 						System.out.println("main getting hashtags");
 						JSONArray hashtags = msg.getJSONObject("twitter_entities").getJSONArray("hashtags"); //.text
 						System.out.println("main getting @");
