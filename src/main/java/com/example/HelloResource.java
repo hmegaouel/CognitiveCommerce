@@ -18,6 +18,7 @@ import fb.Facebook;
 import fb.image;
 import main.bdd;
 import main.date;
+import personality.*;
 
 import org.json.JSONException;
 
