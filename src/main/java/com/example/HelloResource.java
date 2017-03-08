@@ -20,12 +20,14 @@ import main.bdd;
 import main.date;
 
 
+
+
 import org.json.JSONException;
 
 import helpers.Element;
 import helpers.Events;
+import helpers.ImageFunctions;
 import twitter.tweet;
-
 import static helpers.EventFunctions.getBestEvent;
 import static helpers.ImageFunctions.getImageTags;
 
@@ -112,22 +114,30 @@ public class HelloResource {
 		System.out.println("Connections: "+connections);
 		List<Events> events = bdd.searchByCity();
 		final Date date = new date().getDate();
+		HashMap<String, Element> allResult = new HashMap<String, Element>();
+		
+		// Extraire les mots-clés Facebook
 		tweet twit = new tweet(twitterUsername,date);
 		twit.getTweets(null);
+		
+		// Extraire les mots-clés Facebook
 		Facebook fb = new Facebook(date, fbToken);
 		fb.processPosts(null);
-		Instagram insta = new Instagram();
-		List<String> images = insta.getUserImages(Instagram.access_token);
-		HashMap<String,Double> tags = getImageTags(images.get(0));
-		System.out.println(tags);
-		//
 		
-		HashMap<String, Element> allResult = new HashMap<String, Element>();
+		// Ajouter les tags d'images Facebook
 		allResult.putAll(fb.result);
 		allResult.putAll(twit.result);
 		image im = new image(fbToken);
 		im.processImages(null);
 		allResult.putAll(im.imageDb);
+		
+		// Ajouter les tags d'images Instagram
+		Instagram insta = new Instagram();
+		HashMap<String, String> images = insta.getUserImages(insta.access_token);
+		HashMap<String, Element> insta_result = ImageFunctions.getAllTags(images);
+		allResult.putAll(insta_result);
+		
+		
 		String best = getBestEvent(events, allResult, date).toString();
 		connections--;
 		System.out.println("Closing, connections left: "+connections);
