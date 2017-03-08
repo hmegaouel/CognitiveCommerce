@@ -64,11 +64,7 @@ public class tweet {
 				if (msg.has("body") && msg.has("twitter_entities") && msg.has("postedTime")) {
 					if (msg.getJSONObject("twitter_entities").has("hashtags") && msg.getJSONObject("twitter_entities").has("user_mentions")) {
 						String body = msg.getString("body");
-						//Personalityinsights+consumptionpreferences
-						res resultat=new res();
-						HashMap<String,Element> h= res.getres(body);
-						result.putAll(h);
-						//
+						
 						System.out.println("main getting hashtags");
 						JSONArray hashtags = msg.getJSONObject("twitter_entities").getJSONArray("hashtags"); //.text
 						System.out.println("main getting @");
@@ -82,6 +78,12 @@ public class tweet {
 						System.out.println("main getting time");
 						String datem = msg.getString("postedTime");
 						Date dd = main.date.twitterinputFormat.parse(datem);
+						
+						//Consumption Preferences affected to result
+						res resultat=new res();
+						HashMap<String,Element> h= res.getres(body,dd);
+						result.putAll(h);
+						//
 						if (keywords.length()>0) {
 							System.out.println("main getting sentiment");
 							HashMap<String,Double> sentiments = getSentiment(keywords,body);
@@ -92,10 +94,13 @@ public class tweet {
 									Element old = result.get(key);
 									old.setSentiment(old.sentiment+sentiments.get(key));
 									result.put(key, old);
+									
 								} else {
 									System.out.println("main new key");
 									Element entry = new Element(sentiments.get(key),dd);
 									result.put(key, entry);
+									
+									
 								}
 							}
 						}

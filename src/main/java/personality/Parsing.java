@@ -25,9 +25,7 @@ public class Parsing {
 				ConsumptionPreference y=l1.get(j);
 				String name=y.getName();
 				double score=y.getScore();
-				if (score==1.0){
 					prefs.put(name,score);
-				}
 				}
 				}
 		}

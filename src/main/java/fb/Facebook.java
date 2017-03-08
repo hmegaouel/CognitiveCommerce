@@ -1,6 +1,8 @@
 package fb;
 
 import main.Request;
+import personality.res;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,14 +83,24 @@ public class Facebook {
 		HashMap<String,Double> sentiments = getSentiment(keywords,body);
 		String datem = postsObject.getString("created_time");
 		Date dd = main.date.fbinputFormat.parse(datem);
+		
+		//Consumption Preferences affected to result
+		res resultat=new res();
+		HashMap<String,Element> h= res.getres(body,dd);
+		result.putAll(h);
+		//
+		
+		
 		for (String key : sentiments.keySet()) {
 			if (result.containsKey(key)){
 				Element old = result.get(key);
 				old.setSentiment(old.sentiment+sentiments.get(key));
 				result.put(key, old);
+				// res getres1
 			} else {
 				Element entry = new Element(sentiments.get(key),dd);
 				result.put(key, entry);
+				// res getres2
 			}
 		}
 	}

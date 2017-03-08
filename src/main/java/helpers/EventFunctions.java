@@ -14,6 +14,7 @@ import java.util.*;
 public class EventFunctions {
 
     private static NormalizedLevenshtein l = new NormalizedLevenshtein();
+    private static Double datecurseur=0.0;
 
     public static double getEventScore(Events event, HashMap<String, Element> allElements, Date currentDate) throws FileNotFoundException {
         double result = 0;
@@ -24,8 +25,8 @@ public class EventFunctions {
             for (String key : allElements.keySet()) {
                 //score = getScore(key,event.keywords.get(i));
                 long diff = (1+currentDate.getTime()-allElements.get(key).date.getTime())/(1000*60*60*24);
-                //result += (allElements.get(key).sentiment)*(score)/diff;
-                result += (allElements.get(key).sentiment)*(1-l.distance(key, event.keywords.get(i)))/diff;
+                //result += (allElements.get(key).sentiment)*(score)/getdatescore(diff,datecurseur);
+                result += (allElements.get(key).sentiment)*(1-l.distance(key, event.keywords.get(i)))/getdatescore(diff,datecurseur);
             }
         }
         return result;
@@ -53,6 +54,10 @@ public class EventFunctions {
             return 0;
         }
 
+    }
+    
+    public static double getdatescore(long diff,Double curseur){
+    	return((diff-1.0)*curseur+1.0);	
     }
 
     public static JSONObject getBestEvent(List<Events> events, HashMap<String, Element> allElements, Date currentDate) throws JSONException, FileNotFoundException {

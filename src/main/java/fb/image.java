@@ -122,11 +122,13 @@ public class image {
 	
 	public JSONArray run(String id) throws IOException, JSONException {
 		File planet = getImage(id);
+		
 	    ClassifyImagesOptions options =
 	        new ClassifyImagesOptions.Builder().images(planet).build();
 	    VisualClassification result = service.classify(options).execute();
 	    JSONArray res = getClasses(result.toString());
 	    return res;
+	    
 	}
 	
 	public JSONArray getClasses(String data) throws JSONException {
@@ -140,6 +142,7 @@ public class image {
 	public static void main(String[] args) throws IOException, JSONException, ParseException {
 		image im = new image("EAACEdEose0cBAO0g5OWC8FdBTwQ904fpbZBqeEXNpFrjfPyTVKhp8qRWxd7dIuvIVlmRJeaVzFjJKV1q9Pezqb6Eu5CXCSbci8D046ZA1Ta6tqVKKuCTRWbwSS85RvdLUU4R6gxZAkc8nQuILIUyOj0A0KEvB8jtD7SxaoWlgZDZD");
 		im.processImages(null);
+		
 	}
 
 }
