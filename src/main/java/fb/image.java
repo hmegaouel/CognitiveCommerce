@@ -3,14 +3,19 @@ package fb;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.VisualRecognition;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifyImagesOptions;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.VisualClassification;
+
 import main.Request;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import helpers.Element;
+import helpers.ImageFunctions;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,6 +33,9 @@ public class image {
 	double max = 1;
 	private String token;
 	
+	static int number_of_pictures = 0;
+	
+	
 	public image(String token) {
 		service = new VisualRecognition(VisualRecognition.VERSION_DATE_2016_05_20);
 	    service.setApiKey("e9391b759dfb709442f973a49c65253f17b26b3c");
@@ -35,8 +43,9 @@ public class image {
 		this.token = token;
 	}
 	
+	
 	public void processImages(String url) throws IOException, JSONException, ParseException {
-		
+
 		String images = null;
 		if (url == null) {
 			String urlString ="https://graph.facebook.com/v2.8/me";
@@ -53,36 +62,62 @@ public class image {
 		JSONArray postsObject = fbObj.getJSONArray("data");
 		System.out.println(postsObject);
 		for (int i=0;i<postsObject.length();i++){
+			
 			String id = postsObject.getJSONObject(i).getString("id");
+			
+			//
+			number_of_pictures++;
+			//
+			
 			String datem = postsObject.getJSONObject(i).getString("created_time");
 			Date dd = main.date.fbinputFormat.parse(datem);
+			
 			JSONArray keywords = run(id);
 			//System.out.println(i*100/postsObject.length()+"%");
 			for (int j=0;j<keywords.length();j++) {
-				if (keywords.getJSONObject(j).has("type_hierarchy")) {
+				
+				/*if (keywords.getJSONObject(j).has("type_hierarchy")) {
 					String tp = keywords.getJSONObject(j).getString("type_hierarchy");
 					String[] parts = tp.split("/");
 					String finalCategory = parts[parts.length-1];
-					if (imageDb.containsKey(finalCategory)) {
-						double actuel = imageDb.get(finalCategory).sentiment+1;
-						if (actuel>max) {
-							max = actuel;
-						}
-						Element old = imageDb.get(finalCategory);
-						old.setSentiment(old.sentiment+1.0);
-						imageDb.put(finalCategory, old);
-					} else {
-						Element entry = new Element(1.0,dd);
-						imageDb.put(finalCategory, entry);
+					*/
+				
+				String finalCategory = keywords.getJSONObject(j).getString("class");
+				Double score = Double.parseDouble(keywords.getJSONObject(j).getString("score"));
+				
+				if (imageDb.containsKey(finalCategory)) {
+					/*
+					double actuel = imageDb.get(finalCategory).sentiment+1;
+					if (actuel>max) {
+						max = actuel;
 					}
+					Element old = imageDb.get(finalCategory);
+					old.setSentiment(old.sentiment+1.0);
+					imageDb.put(finalCategory, old);*/
+					
+					imageDb.get(finalCategory).sentiment += score;
+    				if(dd.after(imageDb.get(finalCategory).date)){
+    					imageDb.get(finalCategory).setDate(dd);
+    				}
+    				
+				} else {
+					
+					imageDb.put(finalCategory, new Element(score, dd));
+					/*
+					Element entry = new Element(1.0,dd);
+					imageDb.put(finalCategory, entry);*/
 				}
 			}
 		}
+		
 		if (fbObj.getJSONObject("paging").has("next")) {
 			processImages(fbObj.getJSONObject("paging").getString("next"));
 		} else {
 			processResults();
 		}
+		
+		
+		
 		
 	}
 
@@ -97,11 +132,23 @@ public class image {
 	}
 	
 	public void processResults(){
-		for (String key : imageDb.keySet()) {
+		
+		/*for (String key : imageDb.keySet()) {
 			Element old = imageDb.get(key);
 			old.setSentiment(imageDb.get(key).sentiment/max);
 			imageDb.put(key,old);
-		}
+		}*/
+		
+		
+		Double max_score = 0.0;
+    	for(String key : imageDb.keySet()){
+    		Double weighted_score = Math.floor(imageDb.get(key).sentiment/number_of_pictures * 100000) / 100000;
+    		imageDb.get(key).setSentiment(weighted_score);
+    		max_score = Math.max(max_score, weighted_score);
+    	}
+    	ImageFunctions.extendScores(imageDb, max_score);
+    	
+		
 	}
 	
 	public File getImage(String id) throws IOException {

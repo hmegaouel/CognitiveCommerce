@@ -16,6 +16,8 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 
+//The result function to be used for processing is in folder Personalityinsightsmodel not this one!
+
 public class Insights {
 
     private Content content;

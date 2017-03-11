@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.google.gson.JsonArray;
@@ -30,16 +31,16 @@ public class Instagram {
 	
 	
 	
-	public List<String> getUserImages(String token) throws IOException{
+	public HashMap<String, String> getUserImages(String token) throws IOException{
 		String response = downloadURL(latestmedia_endpoint, token);
 		System.out.println(response);
-		List<String> result = getImageList(response);
+		HashMap<String, String> result = getImageList(response);
 		return result;
 	}
 	
 	
-	private List<String> getImageList(String response){
-		List<String> result = new ArrayList<String>();
+	private HashMap<String, String> getImageList(String response){
+		HashMap<String, String> result = new HashMap<String, String>();
 		
 		// Parsing des résultats
         JsonParser parser = new JsonParser();
@@ -48,12 +49,13 @@ public class Instagram {
         for(JsonElement o : media_array){
         	JsonObject obj = o.getAsJsonObject();
         	String link = obj.getAsJsonObject("images").getAsJsonObject("standard_resolution").get("url").getAsString();
-        	result.add(link);
+        	String date = obj.get("created_time").getAsString();
+        	result.put(link, date);
         }
 		return result;
 	}
 	
-	// Faire une fonction plus générique ?
+	
 	public String downloadURL(String urlString, String token) throws IOException{
 		
 		String data = "";
