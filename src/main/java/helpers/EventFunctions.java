@@ -22,7 +22,6 @@ public class EventFunctions {
 
     //private static NormalizedLevenshtein l = new NormalizedLevenshtein();
 
-
     // Différents curseurs pour adapter le comportement du middleware
     static double curseur_anciennete = 1;
     static boolean curseur_sentiments = true;
