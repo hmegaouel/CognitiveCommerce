@@ -72,4 +72,17 @@ public class Word2vec {
         return model.similarity(word1, word2);
     }
 
+    public static void main(String [] args) {
+        try {
+            Word2vec w = new Word2vec("fr");
+            try {
+                System.out.println(w.score("maman","princesse"));
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        } catch (ClassNotFoundException e) {
+            System.out.println(e);
+        }
+    }
+
 }

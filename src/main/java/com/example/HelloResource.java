@@ -1,5 +1,6 @@
 package com.example;
 
+import helpers.Word2vec;
 import instagram.Instagram;
 
 import java.io.IOException;
@@ -45,6 +46,29 @@ public class HelloResource {
 	static int connections;
 	int distance = 20000;
 	String dateString;
+
+	@GET
+	@Path("/train")
+	public String train() throws IOException, JSONException {
+		System.out.println("Training word2vec");
+		JSONObject myJSONObj = new JSONObject();
+		try {
+			Word2vec french = new Word2vec("fr");
+			Word2vec english = new Word2vec("fr");
+			try {
+				double fr = french.score("maman","princesse");
+				double en = english.score("king","dad");
+				myJSONObj.put("maman-princesse", fr);
+				myJSONObj.put("king-dad", en);
+			} catch (IOException e) {
+				System.out.println(e);
+			}
+		} catch (ClassNotFoundException e) {
+			System.out.println(e);
+		}
+		myJSONObj.put("okay", "true");
+		return myJSONObj.toString();
+	}
 
 	@GET
 	@Path("/test")
