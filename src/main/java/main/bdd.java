@@ -17,8 +17,8 @@ import java.util.List;
  */
 public class bdd {
 
-    private static String key = "isermaravelturpealldomea"; //iontrandeadegralinedleel
-    private static String pass = "8ace1f814b56e141a107e9883abac86dc798fd6f"; //02ca06c41949d761c1f08364bd15d15b7774cf7c
+    private static String key = "theyesteepturlyingloungs"; //iontrandeadegralinedleel
+    private static String pass = "efa83bbe9da0431d1cce8b8f586f37c5cecfaade"; //02ca06c41949d761c1f08364bd15d15b7774cf7c
     private String account = "3f53d18a-bd59-463c-9eca-5c37a5d02e5a-bluemix";
     private CloudantClient client;
     private static Database db;
